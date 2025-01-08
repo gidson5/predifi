@@ -1,5 +1,4 @@
- 
- #[starknet::contract]
+#[starknet::contract]
 pub mod Predfi {
     use crate::interfaces::ipredfi::iPredifi;
     use crate::base::types::{Pool, TrueFalse};
@@ -30,11 +29,10 @@ pub mod Predfi {
     }
     #[abi(embed_v0)]
     impl predifi of iPredifi<ContractState> {
-        fn create_pool(ref self: ContractState, details:  Pool) -> TrueFalse {
+        fn create_pool(ref self: ContractState, details: Pool) -> TrueFalse {
             // implementation
+
             TrueFalse::True
         }
-      
     }
-
 }
