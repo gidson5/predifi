@@ -1,17 +1,17 @@
 "use client";
 import { ChevronDown } from "lucide-react";
+import { Button } from "./ui/button";
+import { ModeToggle } from "./ui/theme-provider";
 import { useState } from "react";
+import Conneectors from "./connectors";
 import { useAccount, useDisconnect } from "@starknet-react/core";
-import Conneectors from "../connector";
-import { Button } from "../ui/button";
-import { ModeToggle } from "../theme-toggle";
-import { addressSlice } from "@/lib/address-slice";
+import { addressSlice } from "@/lib/helper";
 
 function Nav() {
   const [openModal, setModal] = useState(false);
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect({});
-  const user = isConnected ? addressSlice(address ?? "") : "Connect Wallet";
+  const user = isConnected ? addressSlice(address??"") : "Connect Wallet";
 
   function modalHandler() {
     setModal((prev) => !prev);

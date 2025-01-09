@@ -4,14 +4,17 @@ import React from "react";
 import { sepolia, mainnet } from "@starknet-react/chains";
 import {
   StarknetConfig,
-  publicProvider,
   argent,
+  //alchemyProvider,
   braavos,
   useInjectedConnectors,
   voyager,
+  publicProvider,
 } from "@starknet-react/core";
 
 export function StarknetProvider({ children }: { children: React.ReactNode }) {
+  //const alchemyApiKey = process.env.NEXT_PUBLIC_ALC_RPC_UR || ""; 
+  //const provider = alchemyProvider({apiKey:alchemyApiKey});
   const { connectors } = useInjectedConnectors({
     // Show these connectors if the user has no connector installed.
     recommended: [argent(), braavos()],
