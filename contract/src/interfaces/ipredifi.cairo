@@ -1,9 +1,9 @@
-use crate::base::types::{TrueFalse, PoolDetails};
+use crate::base::types::{PoolDetails};
 use starknet::ContractAddress;
 
 #[starknet::interface]
 pub trait iPredifi<TContractState> {
-    fn create_pool(ref self: TContractState, details: PoolDetails) -> TrueFalse;
+    fn create_pool(ref self: TContractState, details: PoolDetails) -> bool;
     fn get_all_pools(self: @TContractState) -> Array<PoolDetails>;
     // fn get_active_pools(self: @TContractState) -> Array<PoolDetails>;
 // fn get_locked_pools(self: @TContractState) -> Array<PoolDetails>;
