@@ -20,8 +20,8 @@ function Nav() {
   return (
     <>
       {openModal && !isConnected && <Conectors setIsOpen={modalHandler} />}
-      <div className="relative">
-        <nav className="flex justify-between items-center pl-5 pr-14 mt-4">
+      <div className="relative mt-6">
+        <nav className="flex justify-between items-center pl-5 mt-4">
           <Link href={routes.home} className="text-xl font-normal">
             PrediFi
           </Link>
