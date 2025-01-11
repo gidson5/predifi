@@ -8,25 +8,36 @@ pub mod Predfi {
     use starknet::{ContractAddress};
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use core::traits::Into;
+    use starknet::{
+        syscalls::deploy_syscall, SyscallResultTrait, syscalls, class_hash::class_hash_const, ClassHash
+    };
 
+    use openzeppelin::upgrades::UpgradeableComponent;
+    use openzeppelin::upgrades::interface::IUpgradeable;  
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
+    component!(path: UpgradeableComponent, storage: upgradeable, event: UpgradeableEvent);
 
     #[abi(embed_v0)]
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
     impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
-
+    impl UpgradeableInternalImpl = UpgradeableComponent::InternalImpl<ContractState>;
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
         #[flat]
         OwnableEvent: OwnableComponent::Event,
+        #[flat]
+        UpgradeableEvent: UpgradeableComponent::Event,
     }
     #[storage]
     struct Storage {
         // making the contract ownable by someone
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
+
+        #[substorage(v0)]
+        upgradeable: UpgradeableComponent::Storage,
         // a vec to store all the pools
         pools_mapping: Map<u32, PoolDetails>,
         pools_len: u32,
@@ -58,6 +69,10 @@ pub mod Predfi {
                 i += 1;
             };
             pool_array
+        }
+        fn upgrade(ref self: ContractState, new_class_hash: ClassHash) {
+            self.ownable.assert_only_owner();
+            self.upgradeable.upgrade(new_class_hash);
         }
     }
     #[generate_trait]
