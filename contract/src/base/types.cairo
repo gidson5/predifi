@@ -29,7 +29,7 @@ fn PoolType(PoolType: Pool) -> felt252 {
     }
 }
 
-#[derive(Drop, Serde, PartialEq, starknet::Store)]
+#[derive(Drop, Serde, PartialEq, starknet::Store, Clone)]
 pub struct PoolDetails {
     // basic pool details
     pub address: starknet::ContractAddress,
