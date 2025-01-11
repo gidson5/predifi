@@ -14,12 +14,6 @@ pub enum Status {
     Closed,
 }
 
-#[derive(Copy, Drop, Serde, PartialEq, starknet::Store)]
-pub enum TrueFalse {
-    True,
-    False,
-}
-
 fn PoolType(PoolType: Pool) -> felt252 {
     match PoolType {
         Pool::WinBet => 'win bet',
@@ -51,4 +45,8 @@ pub struct PoolDetails {
     // the fee that the creator gets
     pub creatorFee: u8,
     pub status: Status,
+    pub isPrivate: bool,
+    pub category: felt252,
+    pub totalBetAmount: u8,
+    pub totalBetCount: u8,    
 }
