@@ -51,6 +51,10 @@ export default {
   				'5': 'hsl(var(--chart-5))'
   			}
   		},
+		fontFamily:{
+			work: "var(--font-work-sans)",
+			jersey: "var(--font-jersey-10)",
+		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
