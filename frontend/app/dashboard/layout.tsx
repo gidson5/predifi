@@ -1,19 +1,21 @@
+import { routes } from "@/lib/route";
 import PlusIcon from "@/svg/plus-icon";
+import Link from "next/link";
 
-function DashoardRoot({
+function DashboardRoot({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <section>
+    <>
       <div className="flex justify-between items-center border-b">
         <div className="flex justify-between items-center gap-3">
           <div className="dark:bg-[#373737] w-[170px] h-[43px] grid place-content-center align-middle rounded-t-full">
-            <span>Dashboard</span>
+            <Link href={routes.dashboard}>Dashboard</Link>
           </div>
           <div className="dark:bg-[#373737] w-[170px] h-[43px] grid place-content-center align-middle rounded-t-full">
-            <span>Profile</span>
+            <Link href={routes.profile}>Profile</Link>
           </div>
         </div>
         <button className="flex gap-3 items-center mb-3">
@@ -21,7 +23,7 @@ function DashoardRoot({
         </button>
       </div>
       {children}
-    </section>
+    </>
   );
 }
-export default DashoardRoot;
+export default DashboardRoot;

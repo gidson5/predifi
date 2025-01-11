@@ -1,3 +1,4 @@
+import { Jersey_10 } from "next/font/google";
 import type { Config } from "tailwindcss";
 
 export default {
@@ -51,6 +52,11 @@ export default {
   				'5': 'hsl(var(--chart-5))'
   			}
   		},
+		fontFamily:{
+			work: ['Work Sans', 'serif'],
+			//Jersey_10,
+			
+		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

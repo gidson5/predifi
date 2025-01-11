@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ui/theme-provider";
 import { StarknetProvider } from "@/components/starknet-provider";
 import Footer from "@/components/layout/footer";
 import Nav from "@/components/layout/nav";
@@ -29,19 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased px-5 md:px-10 xl:px-16`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased px-5 md:px-10 xl:px-16 bg-[#1E1E1E] text-[#FFFFFF]`}
       >
         <StarknetProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Nav />
-            <section className="mt-14 min-h-screen">{children}</section>
-            <Footer />
-          </ThemeProvider>
+          <Nav />
+          <section className="mt-14 min-h-screen pb-14">{children}</section>
+          <Footer />
         </StarknetProvider>
       </body>
     </html>
