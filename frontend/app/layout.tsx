@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Jersey_10, Work_Sans } from "next/font/google";
 import "./globals.css";
 import { StarknetProvider } from "@/components/starknet-provider";
 import Footer from "@/components/layout/footer";
 import Nav from "@/components/layout/nav";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const Jersey10 = Jersey_10({
   subsets: ["latin"],
+  weight: "400",
+  variable: "--font-jersey-10",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const  WorkSans = Work_Sans({
+  variable: "--font-work-sans",
   subsets: ["latin"],
 });
 
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased px-5 md:px-10 xl:px-16 bg-[#1E1E1E] text-[#FFFFFF]`}
+        className={`${Jersey10.variable} ${WorkSans.variable} antialiased px-5 md:px-10 xl:px-16 bg-[#1E1E1E] text-[#FFFFFF]`}
       >
         <StarknetProvider>
           <Nav />

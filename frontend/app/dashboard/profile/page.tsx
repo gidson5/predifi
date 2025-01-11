@@ -4,7 +4,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 import { useRef } from "react";
 function Profile() {
   const imageRef = useRef<HTMLInputElement>(null);
-  async function onSubmit(e) {
+  async function onSubmit(e:React.FormEvent) {
     e.preventDefault();
              const data = imageRef.current?.files;
             // if image is empty
