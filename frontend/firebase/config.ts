@@ -5,35 +5,14 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBs3rH_4KQnO1FO7xqigU33uv654_aFI5E",
-  authDomain: "realtor-clone-ad19c.firebaseapp.com",
-  projectId: "realtor-clone-ad19c",
-  storageBucket: "realtor-clone-ad19c.appspot.com",
-  messagingSenderId: "347563487697",
-  appId: "1:347563487697:web:ecc1c0eff0221f743f30f0",
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID,
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-//const db = getFirestore();
 export default app;
-
-
-// pub struct PoolDetails {
-// // basic pool details
-// address: starknet::ContractAddress,
-
-// poolDescription: ByteArray,
-
-// // pool timings: start time, lock time, end time
-// poolStartTime: felt252,
-
-// // pool options, the options that users can bet on
-// option1: felt252,
-// option2: felt252,
-// // betamounts in strk
-// minBetAmount: u8,
-// maxBetAmount: u8,
-// // the fee that the creator gets
-// creatorFee: u8,
-// status: Status,
