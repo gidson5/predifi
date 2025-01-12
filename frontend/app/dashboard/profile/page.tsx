@@ -40,18 +40,7 @@ function Profile() {
   return (
     <section>
       <form action="" onSubmit={(e) => onSubmit(e)}>
-        <div>
-          <label htmlFor="">image</label>
-          <input ref={imageRef} type="file" name="" id="" className="border " />
-        </div>
-        <div>
-          <label htmlFor=""></label>
-          <input type="text" name="" id="" className="border " />
-        </div>
-        <div>
-          <label htmlFor="">pool type</label>
-          <input type="text" name="" id="" className="border " />
-        </div>
+        
         <div>
           <label htmlFor="">name</label>
           <input type="text" name="" id="" className="border " />

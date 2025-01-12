@@ -4,4 +4,5 @@ export const routes = {
     contact: '/contact',
     dashboard: '/dashboard',
     profile: '/dashboard/profile',
+    createPool: '/dashboard/create-pool',
 }
