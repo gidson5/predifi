@@ -1,5 +1,4 @@
 use crate::base::types::{PoolDetails};
-use starknet::ContractAddress;
 
 #[starknet::interface]
 pub trait iPredifi<TContractState> {

@@ -3,13 +3,13 @@ pub mod Predifi {
     use starknet::storage::StoragePointerReadAccess;
     use crate::interfaces::ipredifi::iPredifi;
     use crate::base::{types::{PoolDetails}, errors::Errors};
-    use starknet::{ContractAddress, get_tx_info};
+    use starknet::{ContractAddress};
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use core::traits::Into;
     
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::UpgradeableComponent;
-    use openzeppelin::upgrades::interface::IUpgradeable;
+    // use openzeppelin::upgrades::interface::IUpgradeable;
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
     component!(path: UpgradeableComponent, storage: upgradeable, event: UpgradeableEvent);
