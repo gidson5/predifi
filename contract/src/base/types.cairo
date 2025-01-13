@@ -30,6 +30,7 @@ pub struct PoolDetails {
     pub poolName: felt252,
     pub poolType: Pool,
     pub poolDescription: ByteArray,
+    pub poolImage: ByteArray,
     // event url where users can see more event details and verify event
     pub poolEventSourceUrl: felt252,
     // pool timings: start time, lock time, end time
@@ -48,5 +49,5 @@ pub struct PoolDetails {
     pub isPrivate: bool,
     pub category: felt252,
     pub totalBetAmount: u8,
-    pub totalBetCount: u8,    
+    pub totalBetCount: u8,
 }

@@ -2,11 +2,11 @@
 pub mod Predifi {
     use starknet::storage::StoragePointerReadAccess;
     use crate::interfaces::ipredifi::iPredifi;
-    use crate::base::{types::{PoolDetails}, errors::Errors};
+    use crate::base::{types::{PoolDetails, Status}, errors::Errors};
     use starknet::{ContractAddress};
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use core::traits::Into;
-    
+
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::UpgradeableComponent;
     // use openzeppelin::upgrades::interface::IUpgradeable;
@@ -35,7 +35,7 @@ pub mod Predifi {
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
         #[substorage(v0)]
-        upgradeable: UpgradeableComponent::Storage, 
+        upgradeable: UpgradeableComponent::Storage,
         // a vec to store all the pools
         pools_mapping: Map<u32, PoolDetails>,
         pools_len: u32,
@@ -58,7 +58,7 @@ pub mod Predifi {
             self.ownable.assert_only_owner();
             self.upgradeable.upgrade(new_class_hash);
         }
-        
+
         fn get_all_pools(self: @ContractState) -> Array<PoolDetails> {
             let mut pool_array = array![];
             let pools_len = self.pools_len.read();
@@ -68,6 +68,22 @@ pub mod Predifi {
                     break;
                 }
                 pool_array.append(self.pools_mapping.read(i));
+                i += 1;
+            };
+            pool_array
+        }
+        fn get_active_pools(self: @ContractState) -> Array<PoolDetails> {
+            let mut pool_array = array![];
+            let pools_len = self.pools_len.read();
+            let mut i: u32 = 1;
+            loop {
+                if i > pools_len {
+                    break;
+                }
+                let pool = self.pools_mapping.read(i);
+                if pool.status == Status::Active {
+                    pool_array.append(pool);
+                }
                 i += 1;
             };
             pool_array
