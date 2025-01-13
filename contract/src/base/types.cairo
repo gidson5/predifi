@@ -14,6 +14,7 @@ pub enum Status {
     Closed,
 }
 
+
 fn PoolType(PoolType: Pool) -> felt252 {
     match PoolType {
         Pool::WinBet => 'win bet',
@@ -48,6 +49,8 @@ pub struct PoolDetails {
     pub status: Status,
     pub isPrivate: bool,
     pub category: felt252,
-    pub totalBetAmount: u8,
+    pub totalBetAmountStrk: u256,
     pub totalBetCount: u8,
+    pub totalStakeOption1: u256,
+    pub totalStakeOption2: u256,
 }
