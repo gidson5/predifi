@@ -58,7 +58,12 @@ pub mod Predifi {
             self.ownable.assert_only_owner();
             self.upgradeable.upgrade(new_class_hash);
         }
-
+        fn vote_in_pool(
+            ref self: ContractState, pool_id: u32, amount: u128, option: felt252
+        ) -> bool {
+            assert(self.assert_vote_values(pool_id, amount, option), Errors::INVALID_VOTE_DETAILS);
+            true
+        }
         fn get_all_pools(self: @ContractState) -> Array<PoolDetails> {
             let mut pool_array = array![];
             let pools_len = self.pools_len.read();
@@ -116,6 +121,20 @@ pub mod Predifi {
 
             // Assert that pool name and description are not empty
             assert(pool.poolName.try_into().unwrap() != 0, 'Pool name cannot be empty');
+            true
+        }
+        fn assert_vote_values(
+            ref self: ContractState, pool_id: u32, amount: u128, option: felt252
+        ) -> bool {
+            let pool = self.pools_mapping.read(pool_id);
+            // Assert that pool is active
+            assert(pool.status == Status::Active, 'Pool is not active');
+
+            // Assert that amount is greater than 0
+            assert(amount > 0, 'Amount must be greater than 0');
+
+            // Assert that option is valid
+            assert(option == pool.option1 || option == pool.option2, 'Invalid option');
             true
         }
     }
