@@ -62,8 +62,10 @@ function CreatePoolForm() {
 
   useEffect(()=>{
     if (poolDemoImage !== undefined) {
-      // setImage(URL.createObjectURL(poolDemoImage[0]));
-      setImage('')
+      const fileContent = poolDemoImage[0]; // Example string
+      const blob = new Blob([fileContent], { type: "image/*" }); // Create a Blob from the string
+      setImage(URL.createObjectURL(blob));
+      //setImage('')
     }
   },[poolDemoImage])
 
@@ -77,7 +79,7 @@ function CreatePoolForm() {
             <input
               type="text"
               id="Name"
-              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px]"
+              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4"
               placeholder="chelsea vs manchester united"
               {...register("name", { required: true })}
             />
@@ -87,7 +89,7 @@ function CreatePoolForm() {
             <select
               id="bet-type"
               {...register("betType", { required: true })}
-              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px]"
+              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-2"
             >
               <option value="win bet" className="bg-[#373737]">
                 win bet
@@ -101,7 +103,15 @@ function CreatePoolForm() {
             {image == null && (
               <div className="w-[111px] h-[111px] rounded-full bg-[#373737]" />
             )}
-            {image !== null && <Image className="w-[111px] h-[111px] rounded-full object-fill" src={image} alt="pool demo" width={111} height={111} />}
+            {image !== null && (
+              <Image
+                className="w-[111px] h-[111px] rounded-full object-fill"
+                src={image}
+                alt="pool demo"
+                width={111}
+                height={111}
+              />
+            )}
             <button className="relative" type="button">
               <span>Add a picture</span>
               <input
@@ -117,7 +127,7 @@ function CreatePoolForm() {
           <label htmlFor="description">Description</label>
           <textarea
             id="description"
-            className="border-[#373737] bg-inherit border rounded-[8px] h-[140px] w-full"
+            className="border-[#373737] bg-inherit border rounded-[8px] h-[140px] w-full px-4 py-1"
             {...register("description", { required: true })}
           />
         </div>
@@ -126,7 +136,7 @@ function CreatePoolForm() {
           <input
             id="Event-details-url"
             {...register("eventDetailsUrl", { required: true })}
-            className="border-[#373737] bg-inherit border rounded-[8px] h-[59px] w-full"
+            className="border-[#373737] bg-inherit border rounded-[8px] h-[59px] w-full px-4"
           />
         </div>
         <div className="grid grid-cols-3 gap-3">
