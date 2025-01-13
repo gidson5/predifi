@@ -32,7 +32,7 @@ pub struct PoolDetails {
     pub poolDescription: ByteArray,
     pub poolImage: ByteArray,
     // event url where users can see more event details and verify event
-    pub poolEventSourceUrl: felt252,
+    pub poolEventSourceUrl: ByteArray,
     // pool timings: start time, lock time, end time
     pub poolStartTime: felt252,
     pub poolLockTime: felt252,
