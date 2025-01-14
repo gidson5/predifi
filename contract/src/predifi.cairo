@@ -2,7 +2,7 @@
 pub mod Predifi {
     use starknet::storage::StoragePointerWriteAccess;
     use starknet::storage::StoragePointerReadAccess;
-    use crate::interfaces::ipredifi::iPredifi;
+    use crate::interfaces::ipredifi::IPredifi;
     use crate::base::{types::{PoolDetails, Status}, errors::Errors};
     use starknet::{
         ContractAddress, get_caller_address, contract_address_const, get_contract_address
@@ -44,7 +44,7 @@ pub mod Predifi {
         // a vec to store all the pools
         pools_mapping: Map<u32, PoolDetails>,
         poolStakeData: Map<u32, Map<ContractAddress, u256>>,
-         // this is for the pool, the pool id the user that staked and the amount he staked
+        // this is for the pool, the pool id the user that staked and the amount he staked
         pools_len: u32,
         strk_token: ContractAddress,
     }
@@ -55,7 +55,7 @@ pub mod Predifi {
         self.strk_token.write(strk_address);
     }
     #[abi(embed_v0)]
-    impl predifi of iPredifi<ContractState> {
+    impl predifi of IPredifi<ContractState> {
         fn create_pool(ref self: ContractState, details: PoolDetails) -> bool {
             assert(self.assert_pool_values(details.clone()), Errors::INVALID_POOL_DETAILS);
             let current_pool_len: u32 = self.pools_len.read();
@@ -115,7 +115,9 @@ pub mod Predifi {
     }
     #[generate_trait]
     impl Private of PrivateTrait {
-        fn transfer_amount_from_user(ref self: ContractState, amount: u256, user: ContractAddress) -> bool {
+        fn transfer_amount_from_user(
+            ref self: ContractState, amount: u256, user: ContractAddress
+        ) -> bool {
             let caller = get_caller_address();
             let strk_address = self.strk_token.read();
             let strk = IERC20Dispatcher { contract_address: strk_address };
