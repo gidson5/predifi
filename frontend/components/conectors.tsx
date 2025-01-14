@@ -13,7 +13,7 @@ function Conectors({ setIsOpen }: modal) {
         className="fixed h-screen w-full bg-[#868686]/20 backdrop-blur-md top-0 left-0"
         onClick={setIsOpen}
       />
-      <div className="w-[398px] min-h-[316px] pb-5 pt-8 px-3 bg-[#1E1E1E] top-1/2 right-1/2 fixed -translate-y-[50%] translate-x-[50%]">
+      <div className="w-[398px] min-h-[316px] pb-5 pt-8 px-3 bg-[#1E1E1E] top-1/2 right-1/2 fixed -translate-y-[50%] translate-x-[50%] rounded-lg">
         <button
           className="text-white absolute right-4 top-2"
           onClick={setIsOpen}

@@ -14,6 +14,14 @@ pub enum Status {
     Closed,
 }
 
+fn StatusType(status: Status) -> felt252 {
+    match status {
+        Status::Active => 'active',
+        Status::Locked => 'locked',
+        Status::Settled => 'settled',
+        Status::Closed => 'closed',
+    }
+}
 
 fn PoolType(PoolType: Pool) -> felt252 {
     match PoolType {

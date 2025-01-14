@@ -1,6 +1,6 @@
 import GameCard from "../../components/game-card";
 
-function Dashboard() {
+function Profile() {
   return (
     <section className="flex justify-between gap-y-4 gap-4 items-center flex-wrap">
       <GameCard />
@@ -12,4 +12,4 @@ function Dashboard() {
     </section>
   );
 }
-export default Dashboard;
+export default Profile;
