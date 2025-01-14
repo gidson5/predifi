@@ -3,5 +3,6 @@ export const routes = {
     about: '/about',
     contact: '/contact',
     dashboard: '/dashboard',
-    profile: '/dashboard/profile',
+    profile: '/profile',
+    createPool: '/dashboard/create-pool',
 }
