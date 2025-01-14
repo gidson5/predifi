@@ -7,6 +7,8 @@ import { routes } from "@/lib/route";
 import Edit from "@/svg/edit";
 import { addressSlice } from "@/lib/helper";
 import { useAccount } from "@starknet-react/core";
+
+
 function ProfileLayout({
   children,
 }: Readonly<{
@@ -14,8 +16,8 @@ function ProfileLayout({
 }>) {
     const {address,isConnected} = useAccount()
     const user = isConnected ? addressSlice(address ?? "") : "Wallet address";
-    const url = window.location.href;
     const handleCopy = async () => {
+       const url = window.location.href;
       try {
         await navigator.clipboard.writeText(url);
         //toast.success("Copied!");
