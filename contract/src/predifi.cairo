@@ -59,9 +59,18 @@ pub mod Predifi {
             self.upgradeable.upgrade(new_class_hash);
         }
         fn vote_in_pool(
-            ref self: ContractState, pool_id: u32, amount: u128, option: felt252
+            ref self: ContractState, pool_id: u32, amount: u256, option: felt252
         ) -> bool {
             assert(self.assert_vote_values(pool_id, amount, option), Errors::INVALID_VOTE_DETAILS);
+            assert(self.transfer_amount_from_user(amount, get_caller_address()), 'Transfer failed');
+            let mut pool = self.pools_mapping.read(pool_id);
+            pool.totalBetAmountStrk = pool.totalBetAmountStrk + amount;
+            if option == pool.option1 {
+                pool.totalStakeOption1 = pool.totalStakeOption1 + amount;
+            } else {
+                pool.totalStakeOption2 = pool.totalStakeOption2 + amount;
+            }
+            self.pools_mapping.write(pool_id, pool);
             true
         }
         fn get_all_pools(self: @ContractState) -> Array<PoolDetails> {
@@ -96,6 +105,14 @@ pub mod Predifi {
     }
     #[generate_trait]
     impl Private of PrivateTrait {
+        fn transfer_amount_from_user(ref self: ContractState, amount: u256, user: ContractAddress) -> bool {
+            let caller = get_caller_address();
+            let strk_address = self.strk_token.read();
+            let strk = IERC20Dispatcher { contract_address: strk_address };
+            // Transfer STRK tokens from the caller to this contract
+            assert(strk.transfer_from(caller, get_contract_address(), amount), 'Transfer failed');
+            true
+        }
         fn assert_pool_values(ref self: ContractState, pool: PoolDetails) -> bool {
             let end_time: u64 = pool.poolEndTime.try_into().unwrap();
             let lock_time: u64 = pool.poolLockTime.try_into().unwrap();
