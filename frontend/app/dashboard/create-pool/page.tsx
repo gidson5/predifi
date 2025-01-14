@@ -5,22 +5,8 @@ import Datetime from "react-datetime";
 import moment, { Moment } from "moment";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { creatorInputs } from "@/type/type";
 
-type Inputs = {
-  name: string;
-  betType: string;
-  description: string;
-  eventDetailsUrl: string;
-  startDate: Moment | string;
-  lockTime: string;
-  endTime: string;
-  minBetAmount: number;
-  maxBetAmount: number;
-  creatorsFee: number;
-  optionOne: string;
-  optionTwo: string;
-  poolImage:string;
-};
 
 function CreatePoolForm() {
   
@@ -31,10 +17,10 @@ function CreatePoolForm() {
     watch,
     control,
     //formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm<creatorInputs>();
   const poolDemoImage = watch("poolImage");
   console.log(poolDemoImage)
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<creatorInputs> = (data) => {
     const { startDate} = data;
    
     // Check if the value is a valid Moment object
@@ -64,11 +50,10 @@ function CreatePoolForm() {
     if (poolDemoImage !== undefined) {
       const fileContent = poolDemoImage[0]; // Example string
       const blob = new Blob([fileContent], { type: "image/*" }); // Create a Blob from the string
-      setImage(URL.createObjectURL(blob));
-      //setImage('')
+      setImage(URL.createObjectURL(blob))
     }
   },[poolDemoImage])
-
+  //console.log(image)
   return (
     <section>
       <h2>Create a pool</h2>
@@ -79,7 +64,7 @@ function CreatePoolForm() {
             <input
               type="text"
               id="Name"
-              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4"
+              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4 outline-none"
               placeholder="chelsea vs manchester united"
               {...register("name", { required: true })}
             />
@@ -127,7 +112,7 @@ function CreatePoolForm() {
           <label htmlFor="description">Description</label>
           <textarea
             id="description"
-            className="border-[#373737] bg-inherit border rounded-[8px] h-[140px] w-full px-4 py-1"
+            className="border-[#373737] bg-inherit border rounded-[8px] h-[140px] w-full px-4 py-1 outline-none"
             {...register("description", { required: true })}
           />
         </div>
@@ -136,7 +121,7 @@ function CreatePoolForm() {
           <input
             id="Event-details-url"
             {...register("eventDetailsUrl", { required: true })}
-            className="border-[#373737] bg-inherit border rounded-[8px] h-[59px] w-full px-4"
+            className="border-[#373737] bg-inherit border rounded-[8px] h-[59px] w-full px-4 outline-none"
           />
         </div>
         <div className="grid grid-cols-3 gap-3">
@@ -219,7 +204,7 @@ function CreatePoolForm() {
             <input
               type="text"
               id="option-0ne"
-              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px]"
+              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] outline-none"
               {...register("optionOne", { required: true })}
             />
           </div>
@@ -228,9 +213,30 @@ function CreatePoolForm() {
             <input
               type="text"
               id="option-two"
-              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px]"
+              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] outline-none"
               {...register("optionTwo", { required: true })}
             />
+          </div>
+          <div className="flex gap-1 flex-col place-self-end w-full">
+            <label htmlFor="bet-type">Bet type</label>
+            <select
+              id="bet-type"
+              {...register("betType", { required: true })}
+              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-2 outline-none"
+            >
+              <option value="sport" className="bg-[#373737]">
+                sport
+              </option>
+              <option value="culture" className="bg-[#373737]">
+                culture
+              </option>
+              <option value="politics" className="bg-[#373737]">
+                politics
+              </option>
+              <option value="others" className="bg-[#373737]">
+                others
+              </option>
+            </select>
           </div>
         </div>
         <div className="grid grid-cols-3 gap-3">
@@ -240,7 +246,7 @@ function CreatePoolForm() {
               type="number"
               {...register("minBetAmount", { required: true })}
               id="min-bet-amount"
-              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4"
+              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4 outline-none"
             />
           </div>
           <div className="flex gap-1 flex-col place-self-end w-full">
@@ -249,7 +255,7 @@ function CreatePoolForm() {
               type="number"
               {...register("maxBetAmount", { required: true })}
               id="max-bet-amount"
-              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4"
+              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4 outline-none"
             />
           </div>
           <div className="flex gap-1 flex-col place-self-end w-full">
@@ -257,10 +263,10 @@ function CreatePoolForm() {
             <input
               type="number"
               id="creators-fee"
-              {...register("creatorsFee", { required: true })}
+              {...register("creatorsFee", { required: true,max:5 })}
               placeholder="5"
-              max="5"
-              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4"
+              //max="5"
+              className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4 outline-none"
             />
           </div>
         </div>
