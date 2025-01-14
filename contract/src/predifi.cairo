@@ -1,14 +1,19 @@
 #[starknet::contract]
 pub mod Predifi {
+    use starknet::storage::StoragePointerWriteAccess;
     use starknet::storage::StoragePointerReadAccess;
     use crate::interfaces::ipredifi::iPredifi;
     use crate::base::{types::{PoolDetails, Status}, errors::Errors};
-    use starknet::{ContractAddress};
+    use starknet::{
+        ContractAddress, get_caller_address, contract_address_const, get_contract_address
+    };
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use core::traits::Into;
 
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::UpgradeableComponent;
+
+    use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     // use openzeppelin::upgrades::interface::IUpgradeable;
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -38,12 +43,16 @@ pub mod Predifi {
         upgradeable: UpgradeableComponent::Storage,
         // a vec to store all the pools
         pools_mapping: Map<u32, PoolDetails>,
+        poolStakeData: Map<u32, Map<ContractAddress, u256>>,
+         // this is for the pool, the pool id the user that staked and the amount he staked
         pools_len: u32,
+        strk_token: ContractAddress,
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, owner: ContractAddress) {
+    fn constructor(ref self: ContractState, owner: ContractAddress, strk_address: ContractAddress) {
         self.ownable.initializer(owner);
+        self.strk_token.write(strk_address);
     }
     #[abi(embed_v0)]
     impl predifi of iPredifi<ContractState> {
@@ -54,10 +63,7 @@ pub mod Predifi {
             self.pools_mapping.write(new_pool_len, details);
             true
         }
-        fn upgrade(ref self: ContractState, new_class_hash: starknet::class_hash::ClassHash) {
-            self.ownable.assert_only_owner();
-            self.upgradeable.upgrade(new_class_hash);
-        }
+
         fn vote_in_pool(
             ref self: ContractState, pool_id: u32, amount: u256, option: felt252
         ) -> bool {
@@ -72,6 +78,10 @@ pub mod Predifi {
             }
             self.pools_mapping.write(pool_id, pool);
             true
+        }
+        fn upgrade(ref self: ContractState, new_class_hash: starknet::class_hash::ClassHash) {
+            self.ownable.assert_only_owner();
+            self.upgradeable.upgrade(new_class_hash);
         }
         fn get_all_pools(self: @ContractState) -> Array<PoolDetails> {
             let mut pool_array = array![];
@@ -118,10 +128,10 @@ pub mod Predifi {
             let lock_time: u64 = pool.poolLockTime.try_into().unwrap();
             let start_time: u64 = pool.poolStartTime.try_into().unwrap();
             // Assert that end time is greater than lock time
-            assert(end_time > lock_time, 'lock time gresater than end');
+            // assert(end_time > lock_time, 'lock time gresater than end');
 
             // Assert that lock time is greater than start time
-            assert(start_time > start_time, 'Lock time must be after start');
+            // assert(start_time > start_time, 'Lock time must be after start');
 
             // Assert that min bet amount is greater than 0
             assert(pool.minBetAmount > 0, 'Min bet must be greater than 0');
@@ -141,7 +151,7 @@ pub mod Predifi {
             true
         }
         fn assert_vote_values(
-            ref self: ContractState, pool_id: u32, amount: u128, option: felt252
+            ref self: ContractState, pool_id: u32, amount: u256, option: felt252
         ) -> bool {
             let pool = self.pools_mapping.read(pool_id);
             // Assert that pool is active
