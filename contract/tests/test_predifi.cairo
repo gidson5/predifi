@@ -1,17 +1,13 @@
 use snforge_std::{
-    declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address,
-    stop_cheat_caller_address
+    declare, ContractClassTrait, DeclareResultTrait
 };
 
-use starknet::{ContractAddress, contract_address_const};
-use core::array::ArrayTrait;
-use core::traits::TryInto;
+use starknet::{ContractAddress};
 use core::result::ResultTrait;
-use core::option::OptionTrait;
 use core::byte_array::ByteArray;
 
 use contract::base::types::{PoolDetails, Pool, Status};
-use contract::interfaces::ipredifi::{IPredifi, IPredifiDispatcher, IPredifiDispatcherTrait};
+use contract::interfaces::ipredifi::{IPredifiDispatcher, IPredifiDispatcherTrait};
 
 pub mod Accounts {
     use starknet::ContractAddress;
