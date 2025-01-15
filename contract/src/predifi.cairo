@@ -148,6 +148,26 @@ pub mod Predifi {
             };
             pool_array
         }
+
+        fn get_pools_by_contract_address(
+            self: @ContractState, contract_address: ContractAddress,
+        ) -> Array<PoolDetails> {
+            let mut pool_array = array![];
+            let pool_len = self.pools_len.read();
+            let mut i: u32 = 1;
+
+            loop {
+                if i > pool_len {
+                    break;
+                }
+                let pool = self.pools_mapping.read(i);
+                if pool.address == contract_address {
+                    pool_array.append(pool);
+                }
+                i += 1;
+            };
+            pool_array
+        }
     }
 
     #[generate_trait]
