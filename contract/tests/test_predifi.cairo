@@ -71,7 +71,10 @@ fn create_pool_successfully() {
         totalBetAmountStrk: 0,
         totalBetCount: 0,
         totalStakeOption1: 0,
-        totalStakeOption2: 0,
+        totalStakeOption2: 0, 
+        totalSharesOption1: 0, 
+        totalSharesOption2: 0, 
+        initial_share_price: 0
     };
 
     let result = predifi_instance.create_pool(pool_data);
@@ -108,6 +111,9 @@ fn get_all_pools_test() {
         totalBetCount: 0,
         totalStakeOption1: 0,
         totalStakeOption2: 0,
+        totalSharesOption1: 0, 
+        totalSharesOption2: 0, 
+        initial_share_price: 0
     };
 
     let result = predifi_instance.create_pool(pool_data);
