@@ -14,6 +14,14 @@ pub enum Status {
     Closed,
 }
 
+#[derive(Drop, Serde, PartialEq, starknet::Store, Clone)]
+pub struct UserStake {
+    pub amount: u256,
+    pub shares: u256,
+    pub option: felt252,
+}
+
+
 fn StatusType(status: Status) -> felt252 {
     match status {
         Status::Active => 'active',
@@ -61,4 +69,7 @@ pub struct PoolDetails {
     pub totalBetCount: u8,
     pub totalStakeOption1: u256,
     pub totalStakeOption2: u256,
+    pub totalSharesOption1: u256,
+    pub totalSharesOption2: u256,
+    pub initial_share_price: u16,
 }
