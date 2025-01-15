@@ -3,12 +3,13 @@ pub mod Predifi {
     use starknet::storage::StoragePointerWriteAccess;
     use starknet::storage::StoragePointerReadAccess;
     use crate::interfaces::ipredifi::IPredifi;
-    use crate::base::{types::{PoolDetails, Status}, errors::Errors};
+    use crate::base::{types::{PoolDetails, Status, UserStake}, errors::Errors};
     use starknet::{
         ContractAddress, get_caller_address, contract_address_const, get_contract_address,
     };
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use core::traits::Into;
+
 
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::UpgradeableComponent;
@@ -43,7 +44,7 @@ pub mod Predifi {
         upgradeable: UpgradeableComponent::Storage,
         // a vec to store all the pools
         pools_mapping: Map<u32, PoolDetails>,
-        poolStakeData: Map<u32, Map<ContractAddress, u256>>,
+        poolStakeData: Map<(u32, ContractAddress), UserStake>,
         // this is for the pool, the pool id the user that staked and the amount he staked
         pools_len: u32,
         strk_token: ContractAddress,
@@ -53,6 +54,14 @@ pub mod Predifi {
     fn constructor(ref self: ContractState, owner: ContractAddress, strk_address: ContractAddress) {
         self.ownable.initializer(owner);
         self.strk_token.write(strk_address);
+    }
+    fn calculate_shares(
+        total_amount: u256, new_amount: u256, total_shares: u256, initial_share_price: u16,
+    ) -> u256 {
+        if total_amount == 0 {
+            return (new_amount * 10000) / (initial_share_price.try_into().unwrap());
+        }
+        (new_amount * total_shares) / total_amount
     }
     #[abi(embed_v0)]
     impl predifi of IPredifi<ContractState> {
@@ -64,19 +73,44 @@ pub mod Predifi {
             true
         }
 
+
         fn vote_in_pool(
             ref self: ContractState, pool_id: u32, amount: u256, option: felt252,
         ) -> bool {
             assert(self.assert_vote_values(pool_id, amount, option), Errors::INVALID_VOTE_DETAILS);
             assert(self.transfer_amount_from_user(amount, get_caller_address()), 'Transfer failed');
+
             let mut pool = self.pools_mapping.read(pool_id);
-            pool.totalBetAmountStrk = pool.totalBetAmountStrk + amount;
+            let caller = get_caller_address();
+            let shares = 
+            calculate_shares(
+                    if option == pool.option1 {
+                        pool.totalStakeOption1
+                    } else {
+                        pool.totalStakeOption2
+                    },
+                    amount,
+                    if option == pool.option1 {
+                        pool.totalSharesOption1
+                    } else {
+                        pool.totalSharesOption2
+                    },
+                    pool.initial_share_price,
+                );
+
+            pool.totalBetAmountStrk += amount;
             if option == pool.option1 {
-                pool.totalStakeOption1 = pool.totalStakeOption1 + amount;
+                pool.totalStakeOption1 += amount;
+                pool.totalSharesOption1 += shares;
             } else {
-                pool.totalStakeOption2 = pool.totalStakeOption2 + amount;
+                pool.totalStakeOption2 += amount;
+                pool.totalSharesOption2 += shares;
             }
+
+            let mut user_stake = UserStake { amount: amount, shares: shares, option: option };
             self.pools_mapping.write(pool_id, pool);
+            self.poolStakeData.write((pool_id, caller), user_stake);
+
             true
         }
         fn upgrade(ref self: ContractState, new_class_hash: starknet::class_hash::ClassHash) {

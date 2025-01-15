@@ -13,4 +13,8 @@ account = "predifi"
 accounts-file = "/home/akshola00/.starknet_accounts/starknet_open_zeppelin_accounts.json"
 url = "https://free-rpc.nethermind.io/sepolia-juno/"
 
- # 0x4287a17fc57912782dbcbf43b9cdf8b9d8133e275ded2f03bd2617c3fa1974d
+# 0x4287a17fc57912782dbcbf43b9cdf8b9d8133e275ded2f03bd2617c3fa1974d
+[sncast.predifi2]
+account = "predifi2"
+accounts-file = "/home/codespace/.starknet_accounts/starknet_open_zeppelin_accounts.json"
+url = "https://free-rpc.nethermind.io/sepolia-juno/"
