@@ -112,7 +112,26 @@ pub mod Predifi {
             };
             pool_array
         }
+
+        fn get_locked_pools(self: @ContractState) -> Array<PoolDetails> {
+            let mut pool_array = array![];
+            let pools_len = self.pools_len.read();
+
+            let mut i: u32 = 1;
+            loop {
+                if i > pools_len {
+                    break;
+                }
+                let pool = self.pools_mapping.read(i);
+                if pool.status == Status::Locked {
+                    pool_array.append(pool);
+                }
+                i += 1;
+            };
+            pool_array
+        }
     }
+
     #[generate_trait]
     impl Private of PrivateTrait {
         fn transfer_amount_from_user(
