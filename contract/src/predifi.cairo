@@ -5,7 +5,7 @@ pub mod Predifi {
     use crate::interfaces::ipredifi::IPredifi;
     use crate::base::{types::{PoolDetails, Status}, errors::Errors};
     use starknet::{
-        ContractAddress, get_caller_address, contract_address_const, get_contract_address
+        ContractAddress, get_caller_address, contract_address_const, get_contract_address,
     };
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use core::traits::Into;
@@ -65,7 +65,7 @@ pub mod Predifi {
         }
 
         fn vote_in_pool(
-            ref self: ContractState, pool_id: u32, amount: u256, option: felt252
+            ref self: ContractState, pool_id: u32, amount: u256, option: felt252,
         ) -> bool {
             assert(self.assert_vote_values(pool_id, amount, option), Errors::INVALID_VOTE_DETAILS);
             assert(self.transfer_amount_from_user(amount, get_caller_address()), 'Transfer failed');
@@ -130,12 +130,30 @@ pub mod Predifi {
             };
             pool_array
         }
+
+        fn get_closed_pools(self: @ContractState) -> Array<PoolDetails> {
+            let mut pool_array = array![];
+            let pools_len = self.pools_len.read();
+
+            let mut i: u32 = 1;
+            loop {
+                if i > pools_len {
+                    break;
+                }
+                let pool = self.pools_mapping.read(i);
+                if pool.status == Status::Closed {
+                    pool_array.append(pool)
+                }
+                i += 1;
+            };
+            pool_array
+        }
     }
 
     #[generate_trait]
     impl Private of PrivateTrait {
         fn transfer_amount_from_user(
-            ref self: ContractState, amount: u256, user: ContractAddress
+            ref self: ContractState, amount: u256, user: ContractAddress,
         ) -> bool {
             let caller = get_caller_address();
             let strk_address = self.strk_token.read();
@@ -172,7 +190,7 @@ pub mod Predifi {
             true
         }
         fn assert_vote_values(
-            ref self: ContractState, pool_id: u32, amount: u256, option: felt252
+            ref self: ContractState, pool_id: u32, amount: u256, option: felt252,
         ) -> bool {
             let pool = self.pools_mapping.read(pool_id);
             // Assert that pool is active

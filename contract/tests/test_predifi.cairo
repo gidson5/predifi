@@ -37,7 +37,7 @@ fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -
 fn contract_deployed_successfully() {
     // deploying the student_registry contract
     let mut predifi_call_data: Array<felt252> = array![
-        Accounts::owner().into(), Accounts::strkaddress().into()
+        Accounts::owner().into(), Accounts::strkaddress().into(),
     ];
     let predifi_contract_address: ContractAddress = deploy_util("Predifi", predifi_call_data);
     let predifi_instance = IPredifiDispatcher { contract_address: predifi_contract_address };
@@ -46,7 +46,7 @@ fn contract_deployed_successfully() {
 #[test]
 fn create_pool_successfully() {
     let mut predifi_call_data: Array<felt252> = array![
-        Accounts::owner().into(), Accounts::strkaddress().into()
+        Accounts::owner().into(), Accounts::strkaddress().into(),
     ];
     let predifi_contract_address: ContractAddress = deploy_util("Predifi", predifi_call_data);
     let predifi_instance = IPredifiDispatcher { contract_address: predifi_contract_address };
@@ -82,7 +82,7 @@ fn create_pool_successfully() {
 #[test]
 fn get_all_pools_test() {
     let mut predifi_call_data: Array<felt252> = array![
-        Accounts::owner().into(), Accounts::strkaddress().into()
+        Accounts::owner().into(), Accounts::strkaddress().into(),
     ];
     let predifi_contract_address: ContractAddress = deploy_util("Predifi", predifi_call_data);
     let predifi_instance = IPredifiDispatcher { contract_address: predifi_contract_address };
