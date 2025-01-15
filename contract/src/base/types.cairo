@@ -43,6 +43,7 @@ fn PoolType(PoolType: Pool) -> felt252 {
 #[derive(Drop, Serde, PartialEq, Debug, starknet::Store, Clone)]
 pub struct PoolDetails {
     // basic pool details
+    pub pool_id: u256,
     pub address: starknet::ContractAddress,
     pub poolName: felt252,
     pub poolType: Pool,

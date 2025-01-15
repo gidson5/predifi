@@ -9,7 +9,8 @@ pub mod Predifi {
     };
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use core::traits::Into;
-
+    // pragma lib importation
+    use pragma_lib::abi::{IRandomnessDispatcher, IRandomnessDispatcherTrait};
 
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::UpgradeableComponent;
@@ -48,12 +49,24 @@ pub mod Predifi {
         // this is for the pool, the pool id the user that staked and the amount he staked
         pools_len: u32,
         strk_token: ContractAddress,
+        // pragma needs
+        randomness_contract_address: ContractAddress,
+        last_random: felt252,
+        pending_pools: Map<u32, bool> // Track pools waiting for IDs             
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, owner: ContractAddress, strk_address: ContractAddress) {
+    fn constructor(
+        ref self: ContractState,
+        owner: ContractAddress,
+        strk_address: ContractAddress,
+        randomness_contract_address: ContractAddress,
+    ) {
         self.ownable.initializer(owner);
         self.strk_token.write(strk_address);
+        // pragma writng the randomness contract address
+        self.randomness_contract_address.write(randomness_contract_address);
+        self.pools_len.write(0);
     }
     fn calculate_shares(
         total_amount: u256, new_amount: u256, total_shares: u256, initial_share_price: u16,
@@ -69,8 +82,54 @@ pub mod Predifi {
             assert(self.assert_pool_values(details.clone()), Errors::INVALID_POOL_DETAILS);
             let current_pool_len: u32 = self.pools_len.read();
             let new_pool_len: u32 = current_pool_len + 1;
-            self.pools_mapping.write(new_pool_len, details);
+            self.pools_len.write(new_pool_len);
+
+            let randomness_dispatcher = IRandomnessDispatcher {
+                contract_address: self.randomness_contract_address.read(),
+            };
+
+            // Configure randomness request
+            let seed: u64 = current_pool_len.try_into().unwrap(); // Use counter as seed
+            let callback_address = get_contract_address();
+            let callback_fee_limit = 100000000000000; // Adjust based on your needs
+            let publish_delay = 1; // Minimum blocks to wait
+            let num_words = 10; // We only need 10 random numbers
+            let mut calldata = ArrayTrait::<felt252>::new();
+            calldata.append(current_pool_len.try_into().unwrap()); // Pass counter as calldata
+
+            randomness_dispatcher
+                .request_random(
+                    seed.try_into().unwrap(),
+                    callback_address,
+                    callback_fee_limit,
+                    publish_delay,
+                    num_words,
+                    calldata,
+                );
+
+            self.pending_pools.write(current_pool_len.try_into().unwrap(), true);
+
+            // self.pools_mapping.write(new_pool_len, details);
+            // current_pool_len
             true
+        }
+
+        fn receive_random_words(
+            ref self: ContractState,
+            requestor_address: ContractAddress,
+            request_id: u64,
+            random_words: Span<felt252>,
+            calldata: Array<felt252>,
+        ) {
+            assert(
+                get_caller_address() == self.randomness_contract_address.read(), 'Invalid caller',
+            );
+            let random_word = *random_words.at(0);
+            let pool_id_u32: u32 = (request_id % 0x100000000).try_into().unwrap();
+            let mut pool = self.pools_mapping.read(pool_id_u32);
+            pool.pool_id = random_word.try_into().unwrap();
+            self.pools_mapping.write(pool_id_u32, pool);
+            self.pending_pools.write(pool_id_u32, false);
         }
 
 
