@@ -82,21 +82,20 @@ pub mod Predifi {
 
             let mut pool = self.pools_mapping.read(pool_id);
             let caller = get_caller_address();
-            let shares = 
-            calculate_shares(
-                    if option == pool.option1 {
-                        pool.totalStakeOption1
-                    } else {
-                        pool.totalStakeOption2
-                    },
-                    amount,
-                    if option == pool.option1 {
-                        pool.totalSharesOption1
-                    } else {
-                        pool.totalSharesOption2
-                    },
-                    pool.initial_share_price,
-                );
+            let shares = calculate_shares(
+                if option == pool.option1 {
+                    pool.totalStakeOption1
+                } else {
+                    pool.totalStakeOption2
+                },
+                amount,
+                if option == pool.option1 {
+                    pool.totalSharesOption1
+                } else {
+                    pool.totalSharesOption2
+                },
+                pool.initial_share_price,
+            );
 
             pool.totalBetAmountStrk += amount;
             if option == pool.option1 {
