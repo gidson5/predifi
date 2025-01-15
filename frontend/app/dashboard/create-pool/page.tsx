@@ -1,16 +1,14 @@
 "use client";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import "react-datetime/css/react-datetime.css";
-import Datetime from "react-datetime";
-import moment, { Moment } from "moment";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { creatorInputs } from "@/type/type";
-
+import { DateInput } from "./components/inputs";
 
 function CreatePoolForm() {
-  
-   const [image, setImage] = useState<null | string>(null);
+  const [image, setImage] = useState<null | string>(null);
   const {
     register,
     handleSubmit,
@@ -19,10 +17,10 @@ function CreatePoolForm() {
     //formState: { errors },
   } = useForm<creatorInputs>();
   const poolDemoImage = watch("poolImage");
-  console.log(poolDemoImage)
+  console.log(poolDemoImage);
   const onSubmit: SubmitHandler<creatorInputs> = (data) => {
-    const { startDate} = data;
-   
+    const { startDate } = data;
+
     // Check if the value is a valid Moment object
     if (moment.isMoment(startDate)) {
       console.log(
@@ -33,26 +31,16 @@ function CreatePoolForm() {
       console.error("Invalid date input:", startDate);
     }
     console.log("submit");
-  };
-  const inputProps = {
-    placeholder: "date/time",
-    className:
-      " text-[#fff] border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4 w-full",
-  };
-  // Define a function to disable past dates
-  const validDate = (current: Moment) => {
-    // Allow only dates and times in the future
-    return current.isSameOrAfter(moment(),"date");
+    console.log(data)
   };
 
-
-  useEffect(()=>{
+  useEffect(() => {
     if (poolDemoImage !== undefined) {
       const fileContent = poolDemoImage[0]; // Example string
       const blob = new Blob([fileContent], { type: "image/*" }); // Create a Blob from the string
-      setImage(URL.createObjectURL(blob))
+      setImage(URL.createObjectURL(blob));
     }
-  },[poolDemoImage])
+  }, [poolDemoImage]);
   //console.log(image)
   return (
     <section>
@@ -125,78 +113,27 @@ function CreatePoolForm() {
           />
         </div>
         <div className="grid grid-cols-3 gap-3">
-          <div className="flex gap-1 flex-col text-base place-self-end w-full">
-            <label htmlFor="Start-time">Start time</label>
-            <Controller
-              name="startDate"
-              control={control}
-              rules={{ required: "Date and time are required" }}
-              render={({ field }) => (
-                <>
-                  <Datetime
-                    {...field}
-                    inputProps={inputProps}
-                    className=" text-[#373737] w-full"
-                    isValidDate={validDate}
-                    onChange={(date) => field.onChange(date)}
-                  />
-                  {/* {fieldState.error && (
-                    <span style={{ color: "red" }}>
-                      {fieldState.error.message}
-                    </span>
-                  )} */}
-                </>
-              )}
-            />
-          </div>
-          <div className="flex gap-1 flex-col place-self-end w-full">
-            <label htmlFor="Lock-time">Lock time</label>
-            <Controller
-              name="lockTime"
-              control={control}
-              rules={{ required: "Date and time are required" }}
-              render={({ field }) => (
-                <>
-                  <Datetime
-                    {...field}
-                    inputProps={inputProps}
-                    className=" text-[#373737] w-full"
-                    isValidDate={validDate}
-                    onChange={(date) => field.onChange(date)}
-                  />
-                  {/* {fieldState.error && (
-                    <span style={{ color: "red" }}>
-                      {fieldState.error.message}
-                    </span>
-                  )} */}
-                </>
-              )}
-            />
-          </div>
-          <div className="flex gap-1 flex-col place-self-end w-full">
-            <label htmlFor="End-time">End time</label>
-            <Controller
-              name="endTime"
-              control={control}
-              rules={{ required: "Date and time are required" }}
-              render={({ field }) => (
-                <>
-                  <Datetime
-                    {...field}
-                    inputProps={inputProps}
-                    className=" text-[#373737] w-full"
-                    isValidDate={validDate}
-                    onChange={(date) => field.onChange(date)}
-                  />
-                  {/* {fieldState.error && (
-                    <span style={{ color: "red" }}>
-                      {fieldState.error.message}
-                    </span>
-                  )} */}
-                </>
-              )}
-            />
-          </div>
+          <DateInput
+            data={{
+              name: "startDate",
+              control,
+            }}
+            name="Start-time"
+          />
+          <DateInput
+            data={{
+              name: "lockTime",
+              control,
+            }}
+            name="Lock-time"
+          />
+          <DateInput
+            data={{
+              name: "endTime",
+              control,
+            }}
+            name="End-time"
+          />
         </div>
         <div className="grid grid-cols-3 gap-3">
           <div className="flex gap-1 flex-col text-base place-self-end w-full">
@@ -263,7 +200,7 @@ function CreatePoolForm() {
             <input
               type="number"
               id="creators-fee"
-              {...register("creatorsFee", { required: true,max:5 })}
+              {...register("creatorsFee", { required: true, max: 5 })}
               placeholder="5"
               //max="5"
               className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4 outline-none"

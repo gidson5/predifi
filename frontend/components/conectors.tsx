@@ -33,7 +33,7 @@ function Conectors({ setIsOpen }: modal) {
               }}
               className="w-full border border-[#373737] rounded-[16px] py-6 capitalize text-start text-lg flex justify-start"
             >
-              {connector.id === "argentX" ? (
+              {connector.id !== "braavos" ? (
                 <>
                   <ArgentIcon />
                   {connector.id}
