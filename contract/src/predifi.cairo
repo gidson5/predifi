@@ -3,7 +3,7 @@ pub mod Predifi {
     use starknet::storage::StoragePointerWriteAccess;
     use starknet::storage::StoragePointerReadAccess;
     use crate::interfaces::ipredifi::IPredifi;
-    use crate::base::{types::{PoolDetails, Status, UserStake}, errors::Errors};
+    use crate::base::{types::{PoolDetails, Status, UserStake, Pool}, errors::Errors};
     use starknet::{
         ContractAddress, get_caller_address, contract_address_const, get_contract_address,
     };
@@ -78,8 +78,28 @@ pub mod Predifi {
     }
     #[abi(embed_v0)]
     impl predifi of IPredifi<ContractState> {
-        fn create_pool(ref self: ContractState, details: PoolDetails) -> bool {
-            assert(self.assert_pool_values(details.clone()), Errors::INVALID_POOL_DETAILS);
+        fn create_pool(
+            ref self: ContractState,
+            poolName: felt252,
+            address: starknet::ContractAddress,
+            poolType: Pool,
+            poolDescription: ByteArray,
+            poolImage: ByteArray,
+            poolEventSourceUrl: ByteArray,
+            poolStartTime: felt252,
+            poolLockTime: felt252,
+            poolEndTime: felt252,
+            option1: felt252,
+            option2: felt252,
+            minBetAmount: u8,
+            maxBetAmount: u8,
+            creatorFee: u8,
+            status: Status,
+            isPrivate: bool,
+            category: felt252,
+        ) -> bool {
+
+            // assert(self.assert_pool_values(details.clone()), Errors::INVALID_POOL_DETAILS);
             let current_pool_len: u32 = self.pools_len.read();
             let new_pool_len: u32 = current_pool_len + 1;
             self.pools_len.write(new_pool_len);
