@@ -1,7 +1,7 @@
 use crate::base::types::{PoolDetails};
 
 #[starknet::interface]
-pub trait iPredifi<TContractState> {
+pub trait IPredifi<TContractState> {
     fn create_pool(ref self: TContractState, details: PoolDetails) -> bool;
     fn get_all_pools(self: @TContractState) -> Array<PoolDetails>;
     fn upgrade(ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash);

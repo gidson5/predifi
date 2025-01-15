@@ -1,4 +1,4 @@
-#[derive(Copy, Drop, Serde, PartialEq, starknet::Store)]
+#[derive(Copy, Drop, Serde, PartialEq, starknet::Store, Debug)]
 pub enum Pool {
     WinBet,
     VoteBet,
@@ -6,7 +6,7 @@ pub enum Pool {
     ParlayPool,
 }
 
-#[derive(Copy, Drop, Serde, PartialEq, starknet::Store)]
+#[derive(Copy, Drop, Serde, PartialEq, Debug, starknet::Store)]
 pub enum Status {
     Active,
     Locked,
@@ -32,7 +32,7 @@ fn PoolType(PoolType: Pool) -> felt252 {
     }
 }
 
-#[derive(Drop, Serde, PartialEq, starknet::Store, Clone)]
+#[derive(Drop, Serde, PartialEq, Debug, starknet::Store, Clone)]
 pub struct PoolDetails {
     // basic pool details
     pub address: starknet::ContractAddress,
