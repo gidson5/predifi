@@ -82,7 +82,7 @@ pub mod Predifi {
     }
     #[abi(embed_v0)]
     impl predifi of IPredifi<ContractState> {
-        fn create_pool(ref self: ContractState, pool_name: felt252, pool_type: Status, pool_desc: ByteArray) -> bool {
+        fn create_pool(ref self: ContractState, pool_name: felt252, pool_type: Status, pool_desc: ByteArray, lock_time: u8,  creator_address: ContractAddress) -> bool {
             // assert(self.assert_pool_values(details.clone()), Errors::INVALID_POOL_DETAILS);
             // let current_pool_len: u32 = self.pools_len.read();
             // let new_pool_len: u32 = current_pool_len + 1;
