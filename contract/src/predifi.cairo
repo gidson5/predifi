@@ -51,6 +51,7 @@ pub mod Predifi {
         strk_token: ContractAddress,
         // pragma needs
         randomness_contract_address: ContractAddress,
+        predifi_token_address: ContractAddress,
         last_random: felt252,
         pending_pools: Map<u32, bool> // Track pools waiting for IDs             
     }
@@ -61,11 +62,13 @@ pub mod Predifi {
         owner: ContractAddress,
         strk_address: ContractAddress,
         randomness_contract_address: ContractAddress,
+        predifi_token_address: ContractAddress,
     ) {
         self.ownable.initializer(owner);
         self.strk_token.write(strk_address);
         // pragma writng the randomness contract address
         self.randomness_contract_address.write(randomness_contract_address);
+        self.predifi_token_address.write(predifi_token_address);
         self.pools_len.write(0);
     }
     fn calculate_shares(
@@ -259,6 +262,14 @@ pub mod Predifi {
                 i += 1;
             };
             pool_array
+        }
+        fn validate_pool(ref self: TContractState, pool_id: u32, option: felt252) -> bool {
+            let pool = self.pools_mapping.read(pool_id);
+            assert(pool.status == Status::Active, 'Pool is not active');
+            assert(option == pool.option1 || option == pool.option2, 'Invalid option');
+            let predifi = IERC20Dispatcher { contract_address: self.predifi_token_address.read() }
+            assert
+            true
         }
     }
 
