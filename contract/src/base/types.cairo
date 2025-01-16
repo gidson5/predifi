@@ -14,6 +14,7 @@ pub enum Status {
     Closed,
 }
 
+
 #[derive(Drop, Serde, PartialEq, starknet::Store, Clone)]
 pub struct UserStake {
     pub amount: u256,
@@ -37,6 +38,26 @@ fn PoolType(PoolType: Pool) -> felt252 {
         Pool::VoteBet => 'vote bet',
         Pool::OverUnderBet => 'over under bet',
         Pool::ParlayPool => 'parlay pool',
+    }
+}
+
+
+#[derive(Copy, Drop, Serde, PartialEq, Debug, starknet::Store)]
+pub enum Category {
+    Sports,
+    Politics,
+    Entertainment,
+    Crypto,
+    Other,
+}
+
+pub fn CategoryType(category: Category) -> felt252 {
+    match category {
+        Category::Sports => 'sports',
+        Category::Politics => 'politics',
+        Category::Entertainment => 'entertainment',
+        Category::Crypto => 'crypto',
+        Category::Other => 'other',
     }
 }
 
