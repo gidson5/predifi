@@ -1,9 +1,9 @@
-use crate::base::types::{PoolDetails};
+use crate::base::types::{PoolDetails, PoolDetailsYunus};
 use starknet::ContractAddress;
 
 #[starknet::interface]
 pub trait IPredifi<TContractState> {
-    fn create_pool(ref self: TContractState, details: PoolDetails) -> bool;
+    fn create_pool(ref self: TContractState, details: PoolDetailsYunus) -> bool;
     fn get_all_pools(self: @TContractState) -> Array<PoolDetails>;
     fn upgrade(ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash);
     fn get_active_pools(self: @TContractState) -> Array<PoolDetails>;
@@ -30,3 +30,4 @@ pub trait IPredifi<TContractState> {
 // struct that has all info about the user, current pools hes active on, and many other things
 // like that @martinvibes issue for you
 }
+// sncast --profile predifi2 deploy --class-hash   --fee-token strk --constructor-calldata 
