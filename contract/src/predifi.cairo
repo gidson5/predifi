@@ -53,7 +53,8 @@ pub mod Predifi {
         randomness_contract_address: ContractAddress,
         predifi_token_address: ContractAddress,
         last_random: felt252,
-        pending_pools: Map<u32, bool> // Track pools waiting for IDs             
+        pending_pools: Map<u32, bool>, // Track pools waiting for IDs             
+        
     }
 
     #[constructor]
@@ -112,7 +113,7 @@ pub mod Predifi {
 
             self.pending_pools.write(current_pool_len.try_into().unwrap(), true);
 
-            // self.pools_mapping.write(new_pool_len, details);
+            self.pools_mapping.write(new_pool_len, details);
             // current_pool_len
             true
         }
@@ -263,12 +264,13 @@ pub mod Predifi {
             };
             pool_array
         }
-        fn validate_pool(ref self: TContractState, pool_id: u32, option: felt252) -> bool {
+        fn validate_pool(ref self: ContractState, pool_id: u32, option: felt252) -> bool {
             let pool = self.pools_mapping.read(pool_id);
             assert(pool.status == Status::Active, 'Pool is not active');
             assert(option == pool.option1 || option == pool.option2, 'Invalid option');
-            let predifi = IERC20Dispatcher { contract_address: self.predifi_token_address.read() }
-            assert
+            let predifi_token = IERC20Dispatcher { contract_address: self.predifi_token_address.read() }
+            assert(predifi_token.balance_of(get_caller_address()) >= 10000, 'Insufficient tokens');
+            assert()
             true
         }
     }
