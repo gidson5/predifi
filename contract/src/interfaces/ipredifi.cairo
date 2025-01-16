@@ -1,9 +1,9 @@
-use crate::base::types::{PoolDetails};
+use crate::base::types::{PoolDetails, Status};
 use starknet::ContractAddress;
 
 #[starknet::interface]
 pub trait IPredifi<TContractState> {
-    fn create_pool(ref self: TContractState, details: PoolDetails) -> bool;
+    fn create_pool(ref self: TContractState, pool_name: felt252, pool_type: Status, pool_desc: ByteArray) -> bool;
     fn get_all_pools(self: @TContractState) -> Array<PoolDetails>;
     fn upgrade(ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash);
     fn get_active_pools(self: @TContractState) -> Array<PoolDetails>;

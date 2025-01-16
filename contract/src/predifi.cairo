@@ -82,38 +82,38 @@ pub mod Predifi {
     }
     #[abi(embed_v0)]
     impl predifi of IPredifi<ContractState> {
-        fn create_pool(ref self: ContractState, details: PoolDetails) -> bool {
-            assert(self.assert_pool_values(details.clone()), Errors::INVALID_POOL_DETAILS);
-            let current_pool_len: u32 = self.pools_len.read();
-            let new_pool_len: u32 = current_pool_len + 1;
-            self.pools_len.write(new_pool_len);
+        fn create_pool(ref self: ContractState, pool_name: felt252, pool_type: Status, pool_desc: ByteArray) -> bool {
+            // assert(self.assert_pool_values(details.clone()), Errors::INVALID_POOL_DETAILS);
+            // let current_pool_len: u32 = self.pools_len.read();
+            // let new_pool_len: u32 = current_pool_len + 1;
+            // self.pools_len.write(new_pool_len);
 
-            let randomness_dispatcher = IRandomnessDispatcher {
-                contract_address: self.randomness_contract_address.read(),
-            };
+            // let randomness_dispatcher = IRandomnessDispatcher {
+            //     contract_address: self.randomness_contract_address.read(),
+            // };
 
             // Configure randomness request
-            let seed: u64 = current_pool_len.try_into().unwrap(); // Use counter as seed
-            let callback_address = get_contract_address();
-            let callback_fee_limit = 100000000000000; // Adjust based on your needs
-            let publish_delay = 1; // Minimum blocks to wait
-            let num_words = 10; // We only need 10 random numbers
-            let mut calldata = ArrayTrait::<felt252>::new();
-            calldata.append(current_pool_len.try_into().unwrap()); // Pass counter as calldata
+            // let seed: u64 = current_pool_len.try_into().unwrap(); // Use counter as seed
+            // let callback_address = get_contract_address();
+            // let callback_fee_limit = 100000000000000; // Adjust based on your needs
+            // let publish_delay = 1; // Minimum blocks to wait
+            // let num_words = 10; // We only need 10 random numbers
+            // let mut calldata = ArrayTrait::<felt252>::new();
+            // calldata.append(current_pool_len.try_into().unwrap()); // Pass counter as calldata
 
-            randomness_dispatcher
-                .request_random(
-                    seed.try_into().unwrap(),
-                    callback_address,
-                    callback_fee_limit,
-                    publish_delay,
-                    num_words,
-                    calldata,
-                );
+            // randomness_dispatcher
+            //     .request_random(
+            //         seed.try_into().unwrap(),
+            //         callback_address,
+            //         callback_fee_limit,
+            //         publish_delay,
+            //         num_words,
+            //         calldata,
+            //     );
 
-            self.pending_pools.write(current_pool_len.try_into().unwrap(), true);
+            // self.pending_pools.write(current_pool_len.try_into().unwrap(), true);
 
-            self.pools_mapping.write(new_pool_len, details);
+            // self.pools_mapping.write(new_pool_len, details);
             // current_pool_len
             true
         }
@@ -268,9 +268,9 @@ pub mod Predifi {
             let pool = self.pools_mapping.read(pool_id);
             assert(pool.status == Status::Active, 'Pool is not active');
             assert(option == pool.option1 || option == pool.option2, 'Invalid option');
-            let predifi_token = IERC20Dispatcher { contract_address: self.predifi_token_address.read() }
-            assert(predifi_token.balance_of(get_caller_address()) >= 10000, 'Insufficient tokens');
-            assert()
+            let predifi_token = IERC20Dispatcher { contract_address: self.predifi_token_address.read() };
+            // assert(predifi_token.balance_of(get_caller_address()) >= 10000, 'Insufficient tokens');
+            // assert()
             true
         }
     }
