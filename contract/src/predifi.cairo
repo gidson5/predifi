@@ -268,9 +268,9 @@ pub mod Predifi {
             let pool = self.pools_mapping.read(pool_id);
             assert(pool.status == Status::Active, 'Pool is not active');
             assert(option == pool.option1 || option == pool.option2, 'Invalid option');
-            let predifi_token = IERC20Dispatcher { contract_address: self.predifi_token_address.read() }
+            let predifi_token = IERC20Dispatcher { contract_address: self.predifi_token_address.read() };
             assert(predifi_token.balance_of(get_caller_address()) >= 10000, 'Insufficient tokens');
-            assert()
+            // assert()
             true
         }
     }

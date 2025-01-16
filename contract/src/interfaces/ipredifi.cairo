@@ -19,14 +19,14 @@ pub trait IPredifi<TContractState> {
     );
     fn validate_pool(ref self: TContractState, pool_id: u32, option: felt252) -> bool;
     // fn get_pools_by_contract_address(self: @TContractState, contract_address: ContractAddress) ->
-// Array<PoolDetails>;
-// many other get functions, get wins, get losses get total bet, more storage like that, a
-// struct that has all info about the user, current pools hes active on, and many other things
-// like that @martinvibes issue for you
+    // Array<PoolDetails>;
+    // many other get functions, get wins, get losses get total bet, more storage like that, a
+    // struct that has all info about the user, current pools hes active on, and many other things
+    // like that @martinvibes issue for you
     fn get_pools_by_contract_address(
         self: @TContractState, contract_address: ContractAddress,
     ) -> Array<PoolDetails>;
     // many other get functions, get wins, get losses get total bet, more storage like that, a
-// struct that has all info about the user, current pools hes active on, and many other things
-// like that @martinvibes issue for you
+    // struct that has all info about the user, current pools hes active on, and many other things
+    // like that @martinvibes issue for you
 }
