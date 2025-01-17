@@ -93,9 +93,9 @@ pub mod Predifi {
             poolDescription: ByteArray,
             poolImage: ByteArray,
             poolEventSourceUrl: ByteArray,
-            poolStartTime: felt252,
-            poolLockTime: felt252,
-            poolEndTime: felt252,
+            poolStartTime: u256,
+            poolLockTime: u256,
+            poolEndTime: u256,
             option1: felt252,
             option2: felt252,
             minBetAmount: u8,
@@ -130,28 +130,28 @@ pub mod Predifi {
             let new_pool_len: u32 = current_pool_len + 1;
             self.pools_len.write(new_pool_len);
 
-            let randomness_dispatcher = IRandomnessDispatcher {
-                contract_address: self.randomness_contract_address.read(),
-            };
+            // let randomness_dispatcher = IRandomnessDispatcher {
+            //     contract_address: self.randomness_contract_address.read(),
+            // };
 
             // Configure randomness request
-            let seed: u64 = current_pool_len.try_into().unwrap();
-            let callback_address = get_contract_address();
-            let callback_fee_limit = 100000000000000;
-            let publish_delay = 1;
-            let num_words = 10;
-            let mut calldata = ArrayTrait::<felt252>::new();
-            calldata.append(current_pool_len.try_into().unwrap());
+            // let seed: u64 = current_pool_len.try_into().unwrap();
+            // let callback_address = get_contract_address();
+            // let callback_fee_limit = 100000000000000;
+            // let publish_delay = 1;
+            // let num_words = 10;
+            // let mut calldata = ArrayTrait::<felt252>::new();
+            // calldata.append(current_pool_len.try_into().unwrap());
 
-            randomness_dispatcher
-                .request_random(
-                    seed.try_into().unwrap(),
-                    callback_address,
-                    callback_fee_limit,
-                    publish_delay,
-                    num_words,
-                    calldata,
-                );
+            // randomness_dispatcher
+            //     .request_random(
+            //         seed.try_into().unwrap(),
+            //         callback_address,
+            //         callback_fee_limit,
+            //         publish_delay,
+            //         num_words,
+            //         calldata,
+            //     );
 
             let details = PoolDetails {
                 pool_id: 0,
@@ -379,9 +379,9 @@ pub mod Predifi {
             poolDescription: ByteArray,
             poolImage: ByteArray,
             poolEventSourceUrl: ByteArray,
-            poolStartTime: felt252,
-            poolLockTime: felt252,
-            poolEndTime: felt252,
+            poolStartTime: u256,
+            poolLockTime: u256,
+            poolEndTime: u256,
             option1: felt252,
             option2: felt252,
             minBetAmount: u8,
@@ -390,9 +390,9 @@ pub mod Predifi {
             isPrivate: bool,
             category: Category,
         ) -> bool {
-            let end_time: u64 = poolEndTime.try_into().unwrap();
-            let lock_time: u64 = poolLockTime.try_into().unwrap();
-            let start_time: u64 = poolStartTime.try_into().unwrap();
+            let end_time = poolEndTime.try_into().unwrap();
+            let lock_time = poolLockTime.try_into().unwrap();
+            let start_time = poolStartTime.try_into().unwrap();
 
             // Assert that end time is greater than lock time
             assert(end_time > lock_time, 'invalid end time');
