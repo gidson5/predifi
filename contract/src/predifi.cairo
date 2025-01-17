@@ -3,7 +3,9 @@ pub mod Predifi {
     use starknet::storage::StoragePointerWriteAccess;
     use starknet::storage::StoragePointerReadAccess;
     use crate::interfaces::ipredifi::IPredifi;
-    use crate::base::{types::{PoolDetails, Status, UserStake, Pool, Category, CategoryType }, errors::Errors};
+    use crate::base::{
+        types::{PoolDetails, Status, UserStake, Pool, Category, CategoryType}, errors::Errors,
+    };
     use starknet::{
         ContractAddress, get_caller_address, contract_address_const, get_contract_address,
     };
@@ -56,7 +58,6 @@ pub mod Predifi {
         pending_pools: Map<u32, bool>, // Track pools waiting for IDs   
         user_wins: Map<ContractAddress, u32>,
         user_losses: Map<ContractAddress, u32>,
-        user_total_bets: Map<ContractAddress, u32>,
     }
 
     #[constructor]
@@ -102,11 +103,27 @@ pub mod Predifi {
             isPrivate: bool,
             category: Category,
         ) -> bool {
-            assert(self.assert_pool_values(
-                poolName, poolType, poolDescription.clone(), poolImage.clone(), poolEventSourceUrl.clone(),
-                poolStartTime, poolLockTime, poolEndTime, option1, option2,
-                minBetAmount, maxBetAmount, creatorFee, isPrivate, category
-            ), Errors::INVALID_POOL_DETAILS);
+            assert(
+                self
+                    .assert_pool_values(
+                        poolName,
+                        poolType,
+                        poolDescription.clone(),
+                        poolImage.clone(),
+                        poolEventSourceUrl.clone(),
+                        poolStartTime,
+                        poolLockTime,
+                        poolEndTime,
+                        option1,
+                        option2,
+                        minBetAmount,
+                        maxBetAmount,
+                        creatorFee,
+                        isPrivate,
+                        category,
+                    ),
+                Errors::INVALID_POOL_DETAILS,
+            );
 
             let current_pool_len: u32 = self.pools_len.read();
             let new_pool_len: u32 = current_pool_len + 1;
@@ -319,7 +336,11 @@ pub mod Predifi {
         fn get_user_wins(self: @ContractState, user: ContractAddress) -> u32 {
             self.user_wins.read(user)
         }
-        
+
+        fn get_user_losses(self: @ContractState, user: ContractAddress) -> u32 {
+            self.user_losses.read(user)
+        }
+
         fn validate_pool(ref self: ContractState, pool_id: u32, option: felt252) -> bool {
             let pool = self.pools_mapping.read(pool_id);
             assert(pool.status == Status::Active, 'Pool is not active');
@@ -345,6 +366,7 @@ pub mod Predifi {
             assert(strk.transfer_from(caller, get_contract_address(), amount), 'Transfer failed');
             true
         }
+
         fn assert_pool_values(
             ref self: ContractState,
             poolName: felt252,
@@ -391,6 +413,7 @@ pub mod Predifi {
             assert(poolDescription.len() > 0, 'Pool description invalid');
             true
         }
+
         fn assert_vote_values(
             ref self: ContractState, pool_id: u32, amount: u256, option: felt252,
         ) -> bool {

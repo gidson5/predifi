@@ -39,8 +39,8 @@ pub trait IPredifi<TContractState> {
         self: @TContractState, contract_address: ContractAddress,
     ) -> Array<PoolDetails>;
     fn get_user_wins(self: @TContractState, user: ContractAddress) -> u32;
-    // fn get_user_losses(self: @TContractState, user: ContractAddress) -> u32;
-// fn get_user_total_bets(self: @TContractState, user: ContractAddress) -> u32;
+    fn get_user_losses(self: @TContractState, user: ContractAddress) -> u32;
+    // fn get_user_total_bets(self: @TContractState, user: ContractAddress) -> u32;
 // fn update_pool_result(ref self: TContractState, pool_id: u32, winning_option: felt252);
 // many other get functions, get wins, get losses get total bet, more storage like that, a
 // struct that has all info about the user, current pools hes active on, and many other things

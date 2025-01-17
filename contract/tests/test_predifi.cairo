@@ -77,7 +77,8 @@
 //     }
 // }
 
-// fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -> ContractAddress {
+// fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -> ContractAddress
+// {
 //     let contract = declare(contract_name).unwrap().contract_class();
 //     let (contract_address, _) = contract.deploy(@constructor_calldata).unwrap();
 //     contract_address
@@ -135,7 +136,6 @@
 //     let result = predifi_instance.create_pool(pool_data);
 //     assert_eq!(result, true, "Result is supposed to be true");
 // }
-
 
 // #[test]
 // fn get_all_pools_test() {
