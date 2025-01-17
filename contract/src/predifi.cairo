@@ -390,9 +390,9 @@ pub mod Predifi {
             isPrivate: bool,
             category: Category,
         ) -> bool {
-            let end_time = poolEndTime.try_into().unwrap();
-            let lock_time = poolLockTime.try_into().unwrap();
-            let start_time = poolStartTime.try_into().unwrap();
+            let end_time: u256 = poolEndTime.try_into().unwrap();
+            let lock_time: u256 = poolLockTime.try_into().unwrap();
+            let start_time: u256 = poolStartTime.try_into().unwrap();
 
             // Assert that end time is greater than lock time
             assert(end_time > lock_time, 'invalid end time');
