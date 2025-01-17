@@ -17,15 +17,14 @@ pub trait IPredifi<TContractState> {
         random_words: Span<felt252>,
         calldata: Array<felt252>,
     );
-    // fn get_pools_by_contract_address(self: @TContractState, contract_address: ContractAddress) ->
-// Array<PoolDetails>;
-// many other get functions, get wins, get losses get total bet, more storage like that, a
-// struct that has all info about the user, current pools hes active on, and many other things
-// like that @martinvibes issue for you
     fn get_pools_by_contract_address(
         self: @TContractState, contract_address: ContractAddress,
     ) -> Array<PoolDetails>;
-    // many other get functions, get wins, get losses get total bet, more storage like that, a
+    fn get_user_wins(self: @TContractState, user: ContractAddress) -> u32;
+    // fn get_user_losses(self: @TContractState, user: ContractAddress) -> u32;
+// fn get_user_total_bets(self: @TContractState, user: ContractAddress) -> u32;
+// fn update_pool_result(ref self: TContractState, pool_id: u32, winning_option: felt252);
+// many other get functions, get wins, get losses get total bet, more storage like that, a
 // struct that has all info about the user, current pools hes active on, and many other things
 // like that @martinvibes issue for you
 }

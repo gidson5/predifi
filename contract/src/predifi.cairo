@@ -52,7 +52,10 @@ pub mod Predifi {
         // pragma needs
         randomness_contract_address: ContractAddress,
         last_random: felt252,
-        pending_pools: Map<u32, bool> // Track pools waiting for IDs             
+        pending_pools: Map<u32, bool>, // Track pools waiting for IDs   
+        user_wins: Map<ContractAddress, u32>,
+        user_losses: Map<ContractAddress, u32>,
+        user_total_bets: Map<ContractAddress, u32>,
     }
 
     #[constructor]
@@ -259,6 +262,10 @@ pub mod Predifi {
                 i += 1;
             };
             pool_array
+        }
+
+        fn get_user_wins(self: @ContractState, user: ContractAddress) -> u32 {
+            self.user_wins.read(user)
         }
     }
 
