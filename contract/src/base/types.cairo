@@ -1,5 +1,6 @@
 #[derive(Copy, Drop, Serde, PartialEq, starknet::Store, Debug)]
 pub enum Pool {
+    #[default]
     WinBet,
     VoteBet,
     OverUnderBet,
@@ -8,6 +9,7 @@ pub enum Pool {
 
 #[derive(Copy, Drop, Serde, PartialEq, Debug, starknet::Store)]
 pub enum Status {
+    #[default]
     Active,
     Locked,
     Settled,
@@ -44,6 +46,7 @@ fn PoolType(PoolType: Pool) -> felt252 {
 
 #[derive(Copy, Drop, Serde, PartialEq, Debug, starknet::Store)]
 pub enum Category {
+    #[default]
     Sports,
     Politics,
     Entertainment,
@@ -73,9 +76,9 @@ pub struct PoolDetails {
     // event url where users can see more event details and verify event
     pub poolEventSourceUrl: ByteArray,
     // pool timings: start time, lock time, end time
-    pub poolStartTime: felt252,
-    pub poolLockTime: felt252,
-    pub poolEndTime: felt252,
+    pub poolStartTime: u256,
+    pub poolLockTime: u256,
+    pub poolEndTime: u256,
     // pool options, the options that users can bet on
     pub option1: felt252,
     pub option2: felt252,

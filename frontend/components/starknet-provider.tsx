@@ -1,37 +1,62 @@
 "use client";
-import React from "react";
-
+import { ArgentMobileConnector } from "starknetkit/argentMobile";
+import { WebWalletConnector } from "starknetkit/webwallet";
 import { sepolia, mainnet } from "@starknet-react/chains";
 import {
-  StarknetConfig,
   argent,
-  //alchemyProvider,
   braavos,
+  Connector,
+  StarknetConfig,
+  starkscan,
   useInjectedConnectors,
-  voyager,
-  publicProvider,
 } from "@starknet-react/core";
+import { jsonRpcProvider } from "@starknet-react/core";
+import { ReactNode, useCallback } from "react";
+//import { cartridgeInstance } from "../utils/controller";
 
-export function StarknetProvider({ children }: { children: React.ReactNode }) {
-  //const alchemyApiKey = process.env.NEXT_PUBLIC_ALC_RPC_UR || ""; 
-  //const provider = alchemyProvider({apiKey:alchemyApiKey});
-  const { connectors } = useInjectedConnectors({
-    // Show these connectors if the user has no connector installed.
+const StarknetProvider = ({ children }: { children: ReactNode }) => {
+  const chains = [mainnet, sepolia];
+  const { connectors: injected } = useInjectedConnectors({
     recommended: [argent(), braavos()],
-    // Hide recommended connectors if the user has any connector installed.
-    includeRecommended: "onlyIfNoConnectors",
-    // Randomize the order of the connectors.
-    order: "random",
+    includeRecommended: "always",
   });
+
+  const rpc = useCallback(() => {
+    return {
+      nodeUrl: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
+    };
+  }, []);
+
+  const provider = jsonRpcProvider({ rpc });
+
+  const ArgentMobile = ArgentMobileConnector.init({
+    options: {
+      dappName: "Token bound explorer",
+      url: "https://www.tbaexplorer.com/",
+    },
+    inAppBrowserOptions: {},
+  });
+
+  const connectors = [
+    ...injected,
+    new WebWalletConnector({ 
+      url: "https://web.argent.xyz",
+    }) as never as Connector,
+    ArgentMobile as never as Connector,
+    //cartridgeInstance,
+  ];
 
   return (
     <StarknetConfig
-      chains={[mainnet, sepolia]}
-      provider={publicProvider()}
+      chains={chains}
+      provider={provider}
       connectors={connectors}
-      explorer={voyager}
+      explorer={starkscan}
+      autoConnect
     >
       {children}
     </StarknetConfig>
   );
-}
+};
+
+export default StarknetProvider;
