@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Jersey_10, Work_Sans } from "next/font/google";
 import "./globals.css";
-import { StarknetProvider } from "@/components/starknet-provider";
 import Footer from "@/components/layout/footer";
 import Nav from "@/components/layout/nav";
+import StarknetProvider from "@/components/starknet-provider";
 
 const Jersey10 = Jersey_10({
   subsets: ["latin"],
