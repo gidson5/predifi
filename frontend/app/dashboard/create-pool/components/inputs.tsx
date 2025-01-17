@@ -26,7 +26,7 @@ export function DateInput<T extends FieldValues>({ data, name }: Props<T>) {
 
   return (
     <div className="flex gap-1 flex-col text-base place-self-end w-full">
-      <label htmlFor={name}>Start time</label>
+      <label htmlFor={name}>{name.replace("-"," ")}</label>
       <Controller
         {...data}
         rules={{ required: "Date and time are required" }}

@@ -6,12 +6,15 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { creatorInputs } from "@/type/type";
 import { DateInput } from "./components/inputs";
-import { useAccount } from "@starknet-react/core";
-import {CallData, Contract, RpcProvider, byteArray} from "starknet"
+import { useAccount, useReadContract } from "@starknet-react/core";
+import {CallData, Contract, RpcProvider, byteArray, cairo} from "starknet"
 import { abi, predifiContractAddress } from "@/lib/abi";
 
 function CreatePoolForm() {
   const [image, setImage] = useState<null | string>(null);
+  const [startDate, setStartDate] = useState<number>();
+  const [lockDate, setLockDate] = useState<number>();
+  const [endDate, setEndDate] = useState<number>();
   const {
     register,
     handleSubmit,
@@ -20,21 +23,20 @@ function CreatePoolForm() {
     //formState: { errors },
   } = useForm<creatorInputs>();
   const poolDemoImage = watch("poolImage");
+  const poolStart = watch("startDate");
+  const poolLock = watch("lockTime");
+  const poolEnd = watch("endTime");
   console.log(poolDemoImage);
+  const {data} = useReadContract({
+    abi:abi,
+    functionName:"get_all_pools",
+    address:predifiContractAddress,
+    args:[]
+  })
+  console.log(data)
   const onSubmit: SubmitHandler<creatorInputs> = (data) => {
-    const { startDate } = data;
-
-    // Check if the value is a valid Moment object
-    if (moment.isMoment(startDate)) {
-      console.log(
-        "Selected Date and Time:",
-        startDate.format("YYYY-MM-DD HH:mm:ss")
-      );
-    } else {
-      console.error("Invalid date input:", startDate);
-    }
-    console.log("submit");
-    console.log(data)
+    //const { startDate } = data;
+    console.log(startDate,endDate,lockDate,data)
   };
 
   useEffect(() => {
@@ -43,7 +45,23 @@ function CreatePoolForm() {
       const blob = new Blob([fileContent], { type: "image/*" }); // Create a Blob from the string
       setImage(URL.createObjectURL(blob));
     }
-  }, [poolDemoImage]);
+    // Check if the value is a valid Moment object
+    if (moment.isMoment(poolStart)) {
+      // Math.floor(new Date().getTime() / 1000.0); 
+      const date = Math.floor(new Date(poolStart.format("YYYY-MM-DD HH:mm:ss")).getTime());
+      setStartDate(+date)
+    }
+    // Check if the value is a valid Moment object
+    if (moment.isMoment(poolLock)) {
+      const date = Math.floor(new Date(poolLock.format("YYYY-MM-DD HH:mm:ss")).getDate());
+      setLockDate(+date)
+    }
+    // Check if the value is a valid Moment object
+    if (moment.isMoment(poolEnd)) {
+      const date = Math.floor(new Date(poolEnd.format("YYYY-MM-DD HH:mm:ss")).getDate());
+      setEndDate(date);
+    }
+  }, [poolDemoImage,poolEnd,poolLock,poolStart]);
   const provider = new RpcProvider({
     nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
   });
@@ -68,19 +86,16 @@ function CreatePoolForm() {
               "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             ),
             byteArray.byteArrayFromString("https://www.livescore.com/en/"),
-            "2025-1-16",
-            "2025-1-17",
-            "2025-1-18",
+           cairo.uint256(99995789987654),
+          cairo.uint256(19333995789987654),
+          cairo.uint256(23339995789987654),
             "chelsea to win",
             "manchester united to lose",
             2,
             4,
             3,
-            "0",
-            4,
-            // cairo.uint256(99995789987654),
-            // 100,
-            // address,
+            0,
+            2,
           ])
         );
         console.log(poolCall.calldata);

@@ -45,6 +45,20 @@ export const abi = [
     ],
   },
   {
+    name: "core::integer::u256",
+    type: "struct",
+    members: [
+      {
+        name: "low",
+        type: "core::integer::u128",
+      },
+      {
+        name: "high",
+        type: "core::integer::u128",
+      },
+    ],
+  },
+  {
     name: "core::bool",
     type: "enum",
     variants: [
@@ -81,20 +95,6 @@ export const abi = [
       {
         name: "Other",
         type: "()",
-      },
-    ],
-  },
-  {
-    name: "core::integer::u256",
-    type: "struct",
-    members: [
-      {
-        name: "low",
-        type: "core::integer::u128",
-      },
-      {
-        name: "high",
-        type: "core::integer::u128",
       },
     ],
   },
@@ -154,15 +154,15 @@ export const abi = [
       },
       {
         name: "poolStartTime",
-        type: "core::felt252",
+        type: "core::integer::u256",
       },
       {
         name: "poolLockTime",
-        type: "core::felt252",
+        type: "core::integer::u256",
       },
       {
         name: "poolEndTime",
-        type: "core::felt252",
+        type: "core::integer::u256",
       },
       {
         name: "option1",
@@ -194,7 +194,7 @@ export const abi = [
       },
       {
         name: "category",
-        type: "contract::base::types::Category",
+        type: "core::felt252",
       },
       {
         name: "totalBetAmountStrk",
@@ -266,15 +266,15 @@ export const abi = [
           },
           {
             name: "poolStartTime",
-            type: "core::felt252",
+            type: "core::integer::u256",
           },
           {
             name: "poolLockTime",
-            type: "core::felt252",
+            type: "core::integer::u256",
           },
           {
             name: "poolEndTime",
-            type: "core::felt252",
+            type: "core::integer::u256",
           },
           {
             name: "option1",
@@ -301,7 +301,7 @@ export const abi = [
             type: "core::bool",
           },
           {
-            name: "mycategory",
+            name: "category",
             type: "contract::base::types::Category",
           },
         ],
@@ -448,6 +448,54 @@ export const abi = [
         outputs: [
           {
             type: "core::array::Array::<contract::base::types::PoolDetails>",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_user_wins",
+        type: "function",
+        inputs: [
+          {
+            name: "user",
+            type: "core::starknet::contract_address::ContractAddress",
+          },
+        ],
+        outputs: [
+          {
+            type: "core::integer::u32",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_user_losses",
+        type: "function",
+        inputs: [
+          {
+            name: "user",
+            type: "core::starknet::contract_address::ContractAddress",
+          },
+        ],
+        outputs: [
+          {
+            type: "core::integer::u32",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_user_total_bets",
+        type: "function",
+        inputs: [
+          {
+            name: "user",
+            type: "core::starknet::contract_address::ContractAddress",
+          },
+        ],
+        outputs: [
+          {
+            type: "core::integer::u32",
           },
         ],
         state_mutability: "view",
@@ -611,4 +659,4 @@ export const abi = [
   },
 ] as const;
 export const predifiContractAddress =
-  "0x020f9f5fad75407cc5d4ad78736f3d9750f6cff474a274919f854f2a196dec57";
+  "0x05a940eadbffd7d4c920fa42e857215da7791b63168e49fa34fccb621e802299";
