@@ -1,55 +1,62 @@
 "use client";
-import React from "react";
-
-import { sepolia, mainnet } from "@starknet-react/chains";
-import { InjectedConnector } from "starknetkit/injected";
-import {
-  ArgentMobileConnector,
-  isInArgentMobileAppBrowser,
-} from "starknetkit/argentMobile";
+import { ArgentMobileConnector } from "starknetkit/argentMobile";
 import { WebWalletConnector } from "starknetkit/webwallet";
+import { sepolia, mainnet } from "@starknet-react/chains";
 import {
+  argent,
+  braavos,
+  Connector,
   StarknetConfig,
-  voyager,
-  publicProvider,
+  starkscan,
+  useInjectedConnectors,
 } from "@starknet-react/core";
+import { jsonRpcProvider } from "@starknet-react/core";
+import { ReactNode, useCallback } from "react";
+//import { cartridgeInstance } from "../utils/controller";
 
-export function StarknetProvider({ children }: { children: React.ReactNode }) {
+const StarknetProvider = ({ children }: { children: ReactNode }) => {
   const chains = [mainnet, sepolia];
-   const connectors = isInArgentMobileAppBrowser()
-     ? [
-         ArgentMobileConnector.init({
-           options: {
-             dappName: "predifi",
-             projectId: "nova-1",
-             url: "",
-           },
-           inAppBrowserOptions: {},
-         }),
-       ]
-     : [
-         new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
-         new InjectedConnector({
-           options: { id: "argentX", name: "Argent X" },
-         }),
-         new WebWalletConnector({ url: "https://web.argent.xyz" }),
-         ArgentMobileConnector.init({
-           options: {
-             dappName: "predifi",
-             projectId: "nova-1",
-             url: "",
-           },
-         }),
-       ];
+  const { connectors: injected } = useInjectedConnectors({
+    recommended: [argent(), braavos()],
+    includeRecommended: "always",
+  });
+
+  const rpc = useCallback(() => {
+    return {
+      nodeUrl: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
+    };
+  }, []);
+
+  const provider = jsonRpcProvider({ rpc });
+
+  const ArgentMobile = ArgentMobileConnector.init({
+    options: {
+      dappName: "Token bound explorer",
+      url: "https://www.tbaexplorer.com/",
+    },
+    inAppBrowserOptions: {},
+  });
+
+  const connectors = [
+    ...injected,
+    new WebWalletConnector({ 
+      url: "https://web.argent.xyz",
+    }) as never as Connector,
+    ArgentMobile as never as Connector,
+    //cartridgeInstance,
+  ];
 
   return (
     <StarknetConfig
       chains={chains}
-      provider={publicProvider()}
+      provider={provider}
       connectors={connectors}
-      explorer={voyager}
+      explorer={starkscan}
+      autoConnect
     >
       {children}
     </StarknetConfig>
   );
-}
+};
+
+export default StarknetProvider;

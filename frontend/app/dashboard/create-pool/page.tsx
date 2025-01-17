@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { creatorInputs } from "@/type/type";
 import { DateInput } from "./components/inputs";
+import { useAccount } from "@starknet-react/core";
+import {CallData, Contract, RpcProvider, byteArray} from "starknet"
+import { abi, predifiContractAddress } from "@/lib/abi";
 
 function CreatePoolForm() {
   const [image, setImage] = useState<null | string>(null);
@@ -41,10 +44,58 @@ function CreatePoolForm() {
       setImage(URL.createObjectURL(blob));
     }
   }, [poolDemoImage]);
+  const provider = new RpcProvider({
+    nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
+  });
+  const prediFiContract = new Contract(abi, predifiContractAddress, provider);
+  const {account,address} = useAccount()
+    if (account) {
+      prediFiContract.connect(account);
+    }
+    async function sendFn() {
+      //writeAsync()
+      console.log("contract address", address);
+      if (account && address) {
+        const poolCall = prediFiContract.populate(
+          "create_pool",
+          CallData.compile([
+            "chelsea vs mnchester united",
+            0,
+            byteArray.byteArrayFromString(
+              "derby match beteen chelsea and manchester united at old traford"
+            ),
+            byteArray.byteArrayFromString(
+              "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            byteArray.byteArrayFromString("https://www.livescore.com/en/"),
+            "2025-1-16",
+            "2025-1-17",
+            "2025-1-18",
+            "chelsea to win",
+            "manchester united to lose",
+            2,
+            4,
+            3,
+            "0",
+            4,
+            // cairo.uint256(99995789987654),
+            // 100,
+            // address,
+          ])
+        );
+        console.log(poolCall.calldata);
+        const response = await prediFiContract?.["create_pool"](
+          poolCall.calldata
+        );
+        console.log(response);
+        await provider.waitForTransaction(response?.transaction_hash);
+      }
+    }
   //console.log(image)
   return (
     <section>
       <h2>Create a pool</h2>
+      <button type="button" onClick={sendFn} className="p-3 bg-gray-400">click</button>
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-9">
         <div className="grid grid-cols-3 gap-3">
           <div className="flex gap-1 flex-col text-base place-self-end w-full">
