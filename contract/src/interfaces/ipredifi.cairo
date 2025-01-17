@@ -1,9 +1,26 @@
-use crate::base::types::{PoolDetails};
+use crate::base::types::{PoolDetails, Pool, Status, Category};
 use starknet::ContractAddress;
 
 #[starknet::interface]
 pub trait IPredifi<TContractState> {
-    fn create_pool(ref self: TContractState, details: PoolDetails) -> bool;
+    fn create_pool(
+        ref self: TContractState,
+        poolName: felt252,
+        poolType: Pool,
+        poolDescription: ByteArray,
+        poolImage: ByteArray,
+        poolEventSourceUrl: ByteArray,
+        poolStartTime: felt252,
+        poolLockTime: felt252,
+        poolEndTime: felt252,
+        option1: felt252,
+        option2: felt252,
+        minBetAmount: u8,
+        maxBetAmount: u8,
+        creatorFee: u8,
+        isPrivate: bool,
+        category: Category,
+    ) -> bool;
     fn get_all_pools(self: @TContractState) -> Array<PoolDetails>;
     fn upgrade(ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash);
     fn get_active_pools(self: @TContractState) -> Array<PoolDetails>;
@@ -17,6 +34,7 @@ pub trait IPredifi<TContractState> {
         random_words: Span<felt252>,
         calldata: Array<felt252>,
     );
+    fn validate_pool(ref self: TContractState, pool_id: u32, option: felt252) -> bool;
     fn get_pools_by_contract_address(
         self: @TContractState, contract_address: ContractAddress,
     ) -> Array<PoolDetails>;

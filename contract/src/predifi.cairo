@@ -3,7 +3,7 @@ pub mod Predifi {
     use starknet::storage::StoragePointerWriteAccess;
     use starknet::storage::StoragePointerReadAccess;
     use crate::interfaces::ipredifi::IPredifi;
-    use crate::base::{types::{PoolDetails, Status, UserStake}, errors::Errors};
+    use crate::base::{types::{PoolDetails, Status, UserStake, Pool, Category, CategoryType }, errors::Errors};
     use starknet::{
         ContractAddress, get_caller_address, contract_address_const, get_contract_address,
     };
@@ -51,6 +51,7 @@ pub mod Predifi {
         strk_token: ContractAddress,
         // pragma needs
         randomness_contract_address: ContractAddress,
+        predifi_token_address: ContractAddress,
         last_random: felt252,
         pending_pools: Map<u32, bool>, // Track pools waiting for IDs   
         user_wins: Map<ContractAddress, u32>,
@@ -64,11 +65,13 @@ pub mod Predifi {
         owner: ContractAddress,
         strk_address: ContractAddress,
         randomness_contract_address: ContractAddress,
+        predifi_token_address: ContractAddress,
     ) {
         self.ownable.initializer(owner);
         self.strk_token.write(strk_address);
         // pragma writng the randomness contract address
         self.randomness_contract_address.write(randomness_contract_address);
+        self.predifi_token_address.write(predifi_token_address);
         self.pools_len.write(0);
     }
     fn calculate_shares(
@@ -81,8 +84,30 @@ pub mod Predifi {
     }
     #[abi(embed_v0)]
     impl predifi of IPredifi<ContractState> {
-        fn create_pool(ref self: ContractState, details: PoolDetails) -> bool {
-            assert(self.assert_pool_values(details.clone()), Errors::INVALID_POOL_DETAILS);
+        fn create_pool(
+            ref self: ContractState,
+            poolName: felt252,
+            poolType: Pool,
+            poolDescription: ByteArray,
+            poolImage: ByteArray,
+            poolEventSourceUrl: ByteArray,
+            poolStartTime: felt252,
+            poolLockTime: felt252,
+            poolEndTime: felt252,
+            option1: felt252,
+            option2: felt252,
+            minBetAmount: u8,
+            maxBetAmount: u8,
+            creatorFee: u8,
+            isPrivate: bool,
+            category: Category,
+        ) -> bool {
+            assert(self.assert_pool_values(
+                poolName, poolType, poolDescription.clone(), poolImage.clone(), poolEventSourceUrl.clone(),
+                poolStartTime, poolLockTime, poolEndTime, option1, option2,
+                minBetAmount, maxBetAmount, creatorFee, isPrivate, category
+            ), Errors::INVALID_POOL_DETAILS);
+
             let current_pool_len: u32 = self.pools_len.read();
             let new_pool_len: u32 = current_pool_len + 1;
             self.pools_len.write(new_pool_len);
@@ -92,13 +117,13 @@ pub mod Predifi {
             };
 
             // Configure randomness request
-            let seed: u64 = current_pool_len.try_into().unwrap(); // Use counter as seed
+            let seed: u64 = current_pool_len.try_into().unwrap();
             let callback_address = get_contract_address();
-            let callback_fee_limit = 100000000000000; // Adjust based on your needs
-            let publish_delay = 1; // Minimum blocks to wait
-            let num_words = 10; // We only need 10 random numbers
+            let callback_fee_limit = 100000000000000;
+            let publish_delay = 1;
+            let num_words = 10;
             let mut calldata = ArrayTrait::<felt252>::new();
-            calldata.append(current_pool_len.try_into().unwrap()); // Pass counter as calldata
+            calldata.append(current_pool_len.try_into().unwrap());
 
             randomness_dispatcher
                 .request_random(
@@ -110,9 +135,36 @@ pub mod Predifi {
                     calldata,
                 );
 
-            self.pending_pools.write(current_pool_len.try_into().unwrap(), true);
+            let details = PoolDetails {
+                pool_id: 0,
+                address: get_contract_address(),
+                poolName: poolName,
+                poolType: poolType,
+                poolDescription: poolDescription,
+                poolImage: poolImage,
+                poolEventSourceUrl: poolEventSourceUrl,
+                poolStartTime: poolStartTime,
+                poolLockTime: poolLockTime,
+                poolEndTime: poolEndTime,
+                option1: option1,
+                option2: option2,
+                minBetAmount: minBetAmount,
+                maxBetAmount: maxBetAmount,
+                creatorFee: creatorFee,
+                status: Status::Active,
+                isPrivate: isPrivate,
+                category: CategoryType(category),
+                totalBetAmountStrk: 0,
+                totalBetCount: 0,
+                totalStakeOption1: 0,
+                totalStakeOption2: 0,
+                totalSharesOption1: 0,
+                totalSharesOption2: 0,
+                initial_share_price: 10000,
+            };
 
-            // self.pools_mapping.write(new_pool_len, details);
+            self.pending_pools.write(current_pool_len.try_into().unwrap(), true);
+            self.pools_mapping.write(new_pool_len, details);
             // current_pool_len
             true
         }
@@ -267,6 +319,18 @@ pub mod Predifi {
         fn get_user_wins(self: @ContractState, user: ContractAddress) -> u32 {
             self.user_wins.read(user)
         }
+        
+        fn validate_pool(ref self: ContractState, pool_id: u32, option: felt252) -> bool {
+            let pool = self.pools_mapping.read(pool_id);
+            assert(pool.status == Status::Active, 'Pool is not active');
+            assert(option == pool.option1 || option == pool.option2, 'Invalid option');
+            let predifi_token = IERC20Dispatcher {
+                contract_address: self.predifi_token_address.read(),
+            };
+            assert(predifi_token.balance_of(get_caller_address()) >= 10000, 'Insufficient tokens');
+            // assert()
+            true
+        }
     }
 
     #[generate_trait]
@@ -281,31 +345,50 @@ pub mod Predifi {
             assert(strk.transfer_from(caller, get_contract_address(), amount), 'Transfer failed');
             true
         }
-        fn assert_pool_values(ref self: ContractState, pool: PoolDetails) -> bool {
-            let end_time: u64 = pool.poolEndTime.try_into().unwrap();
-            let lock_time: u64 = pool.poolLockTime.try_into().unwrap();
-            let start_time: u64 = pool.poolStartTime.try_into().unwrap();
+        fn assert_pool_values(
+            ref self: ContractState,
+            poolName: felt252,
+            poolType: Pool,
+            poolDescription: ByteArray,
+            poolImage: ByteArray,
+            poolEventSourceUrl: ByteArray,
+            poolStartTime: felt252,
+            poolLockTime: felt252,
+            poolEndTime: felt252,
+            option1: felt252,
+            option2: felt252,
+            minBetAmount: u8,
+            maxBetAmount: u8,
+            creatorFee: u8,
+            isPrivate: bool,
+            category: Category,
+        ) -> bool {
+            let end_time: u64 = poolEndTime.try_into().unwrap();
+            let lock_time: u64 = poolLockTime.try_into().unwrap();
+            let start_time: u64 = poolStartTime.try_into().unwrap();
+
             // Assert that end time is greater than lock time
-            // assert(end_time > lock_time, 'lock time gresater than end');
+            assert(end_time > lock_time, 'invalid end time');
 
             // Assert that lock time is greater than start time
-            // assert(start_time > start_time, 'Lock time must be after start');
+            assert(lock_time > start_time, 'invalid_lock_time');
 
             // Assert that min bet amount is greater than 0
-            assert(pool.minBetAmount > 0, 'Min bet must be greater than 0');
+            assert(minBetAmount > 0, 'invalid min bet');
 
             // Assert that max bet amount is greater than min bet amount
-            assert(pool.maxBetAmount > pool.minBetAmount, 'min bet greater than max');
+            assert(maxBetAmount > minBetAmount, 'max must be greater than min');
 
-            // Assert that creator fee is within reasonable range (e.g., 0-100%)
-            assert(pool.creatorFee <= 5, 'Creator fee must be 0-100');
+            // Assert that creator fee is within reasonable range (e.g., 0-5%)
+            assert(creatorFee <= 5, 'Creator fee must be 0-5%');
 
             // Assert that pool options are not empty
-            assert(pool.option1.try_into().unwrap() != 0, 'Option 1 cannot be empty');
-            assert(pool.option2.try_into().unwrap() != 0, 'Option 2 cannot be empty');
+            assert(option1 != 0, 'Option 1 cannot be empty');
+            assert(option2 != 0, 'Option 2 cannot be empty');
 
             // Assert that pool name and description are not empty
-            assert(pool.poolName.try_into().unwrap() != 0, 'Pool name cannot be empty');
+            assert(poolName != 0, 'Pool name cannot be empty');
+            assert(poolDescription.len() > 0, 'Pool description invalid');
             true
         }
         fn assert_vote_values(
