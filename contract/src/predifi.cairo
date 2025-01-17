@@ -58,6 +58,7 @@ pub mod Predifi {
         pending_pools: Map<u32, bool>, // Track pools waiting for IDs   
         user_wins: Map<ContractAddress, u32>,
         user_losses: Map<ContractAddress, u32>,
+        user_total_bets: Map<ContractAddress, u32>,
     }
 
     #[constructor]
@@ -339,6 +340,10 @@ pub mod Predifi {
 
         fn get_user_losses(self: @ContractState, user: ContractAddress) -> u32 {
             self.user_losses.read(user)
+        }
+
+        fn get_user_total_bets(self: @ContractState, user: ContractAddress) -> u32 {
+            self.user_total_bets.read(user)
         }
 
         fn validate_pool(ref self: ContractState, pool_id: u32, option: felt252) -> bool {
