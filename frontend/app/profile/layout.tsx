@@ -19,17 +19,15 @@ function ProfileLayout({
 }>) {
   const { address, isConnected } = useAccount();
 
-  const { data, error, status } = useStarkName({
-    address:
-      "0x07af08dad44af4f7461979294f7eff8d3617c27c7c3e3f8222fd2a871517e719",
+  const { data } = useStarkName({
+    address,
   });
 
-  // const { data } = useStarkProfile({
-  //   address:
-  //     "0x07af08dad44af4f7461979294f7eff8d3617c27c7c3e3f8222fd2a871517e719",
-  // });
+  const { data: profile } = useStarkProfile({
+    address,
+  });
 
-  console.log(data, error, status, "___________");
+  console.log(data, profile, "___________");
 
   const user = isConnected ? addressSlice(address ?? "") : "Wallet address";
   const handleCopy = async () => {
@@ -52,18 +50,23 @@ function ProfileLayout({
         <div className="flex justify-between items-center w-full">
           <div className="flex justify-between items-center gap-10">
             <div className="w-[111px] h-[111px] ">
-              <Image className="rounded-full" src={img} alt="user-avatar" />
+              <Image
+                className="rounded-full"
+                src={profile?.profilePicture || img}
+                alt="user-avatar"
+                width={111}
+                height={111}
+              />
             </div>
             <button
               type="button"
               className="flex justify-between items-center border-[#373737] border rounded-full py-2 px-4 gap-2"
             >
-              <span>{user}</span>
+              <span>{data ? data : user}</span>
               <div onClick={handleCopy}>
                 <Clip />
               </div>
             </button>
-            {data} _____
           </div>
           <div className="flex justify-between items-center gap-10">
             <div className="flex justify-between items-center flex-col">
