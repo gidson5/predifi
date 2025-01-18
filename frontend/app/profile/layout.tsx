@@ -1,31 +1,48 @@
-"use client"
+"use client";
 import Image from "next/image";
-import img from "@/public/avatar.png"
+import img from "@/public/avatar.png";
 import Clip from "@/svg/clip";
 import Link from "next/link";
 import { routes } from "@/lib/route";
 import Edit from "@/svg/edit";
 import { addressSlice } from "@/lib/helper";
-import { useAccount } from "@starknet-react/core";
-
+import {
+  useAccount,
+  useStarkName,
+  useStarkProfile,
+} from "@starknet-react/core";
 
 function ProfileLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-    const {address,isConnected} = useAccount()
-    const user = isConnected ? addressSlice(address ?? "") : "Wallet address";
-    const handleCopy = async () => {
-       const url = window.location.href;
-      try {
-        await navigator.clipboard.writeText(url);
-        //toast.success("Copied!");
-      } catch (error) {
-        //toast.error("Failed to copy!, try aagin");
-        console.log(error)
-      }
-    };
+  const { address, isConnected } = useAccount();
+
+  const { data, error, status } = useStarkName({
+    address:
+      "0x07af08dad44af4f7461979294f7eff8d3617c27c7c3e3f8222fd2a871517e719",
+  });
+
+  // const { data } = useStarkProfile({
+  //   address:
+  //     "0x07af08dad44af4f7461979294f7eff8d3617c27c7c3e3f8222fd2a871517e719",
+  // });
+
+  console.log(data, error, status, "___________");
+
+  const user = isConnected ? addressSlice(address ?? "") : "Wallet address";
+  const handleCopy = async () => {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      //toast.success("Copied!");
+    } catch (error) {
+      //toast.error("Failed to copy!, try aagin");
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="border-b border-[#373737] py-3">
@@ -46,6 +63,7 @@ function ProfileLayout({
                 <Clip />
               </div>
             </button>
+            {data} _____
           </div>
           <div className="flex justify-between items-center gap-10">
             <div className="flex justify-between items-center flex-col">
@@ -84,4 +102,4 @@ function ProfileLayout({
     </>
   );
 }
-export default ProfileLayout
+export default ProfileLayout;
