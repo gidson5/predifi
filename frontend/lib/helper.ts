@@ -28,3 +28,9 @@ export function felt252ToString(feltValue: number) {
 
   return result;
 }
+
+// Helper function to short large sentence
+export function sliceWithEllipsis(text: string,number:number): string {
+  if (text.length <= number) return text;
+  return text.slice(0, number) + "...";
+}
