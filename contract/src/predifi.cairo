@@ -4,15 +4,12 @@ pub mod Predifi {
     use crate::interfaces::ipredifi::IPredifi;
     use crate::base::{
         types::{
-            PoolDetails, Status, UserStake, Pool, Category, ValidatorData,
-            ValidateOptions, PoolOdds
+            PoolDetails, Status, UserStake, Pool, Category, ValidatorData, ValidateOptions,
+            PoolOdds,
         },
         errors::Errors,
     };
-    use starknet::{
-        ContractAddress, get_caller_address, get_contract_address,
-        get_block_timestamp,
-    };
+    use starknet::{ContractAddress, get_caller_address, get_contract_address, get_block_timestamp};
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use core::traits::Into;
     use openzeppelin::access::ownable::OwnableComponent;
@@ -157,6 +154,11 @@ pub mod Predifi {
             self.pools_mapping.write(new_pool_len, details);
             true
         }
+
+        fn get_pool_by_id(self: @ContractState, pool_id: u32) -> PoolDetails {
+            self.pools_mapping.read(pool_id)
+        }
+
 
         fn vote_in_pool(
             ref self: ContractState, pool_id: u32, amount: u256, option: felt252,

@@ -83,8 +83,7 @@ pub mod Accounts {
     }
 }
 
-fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -> ContractAddress
-{
+fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -> ContractAddress {
     let contract = declare(contract_name).unwrap().contract_class();
     let (contract_address, _) = contract.deploy(@constructor_calldata).unwrap();
     contract_address
@@ -96,8 +95,8 @@ fn contract_deployed_successfully() {
 
     // deploying the student_registry contract
     let mut predifi_call_data: Array<felt252> = array![
-        Accounts::owner().into(), 
-        Accounts::strkaddress().into(), 
+        Accounts::owner().into(),
+        Accounts::strkaddress().into(),
         mock_randomness_address.into(),
         Accounts::predifi_token().into(),
     ];
@@ -110,30 +109,31 @@ fn create_pool_successfully() {
     let mock_randomness_address = deploy_util("MockRandomness", array![]);
 
     let mut predifi_call_data: Array<felt252> = array![
-        Accounts::owner().into(), 
-        Accounts::strkaddress().into(), 
+        Accounts::owner().into(),
+        Accounts::strkaddress().into(),
         mock_randomness_address.into(),
         Accounts::predifi_token().into(),
     ];
     let predifi_contract_address: ContractAddress = deploy_util("Predifi", predifi_call_data);
     let predifi_instance = IPredifiDispatcher { contract_address: predifi_contract_address };
-    let result = predifi_instance.create_pool(
-        poolName: 'Test Pool',
-        poolType: Pool::WinBet,
-        poolDescription: "Test Description",
-        poolImage: "test.jpg",
-        poolEventSourceUrl: "https://test.com",
-        poolStartTime: 1700000000,
-        poolLockTime: 1700001000,
-        poolEndTime: 1700002000,
-        option1: 'Team A',
-        option2: 'Team B',
-        minBetAmount: 1,
-        maxBetAmount: 100,
-        creatorFee: 5,
-        isPrivate: false,
-        category: Category::Sports,
-    );
+    let result = predifi_instance
+        .create_pool(
+            poolName: 'Test Pool',
+            poolType: Pool::WinBet,
+            poolDescription: "Test Description",
+            poolImage: "test.jpg",
+            poolEventSourceUrl: "https://test.com",
+            poolStartTime: 1700000000,
+            poolLockTime: 1700001000,
+            poolEndTime: 1700002000,
+            option1: 'Team A',
+            option2: 'Team B',
+            minBetAmount: 1,
+            maxBetAmount: 100,
+            creatorFee: 5,
+            isPrivate: false,
+            category: Category::Sports,
+        );
 
     assert_eq!(result, true, "Result is supposed to be true");
 }
@@ -143,32 +143,33 @@ fn get_all_pools_test() {
     let mock_randomness_address = deploy_util("MockRandomness", array![]);
 
     let mut predifi_call_data: Array<felt252> = array![
-        Accounts::owner().into(), 
-        Accounts::strkaddress().into(), 
+        Accounts::owner().into(),
+        Accounts::strkaddress().into(),
         mock_randomness_address.into(),
         Accounts::predifi_token().into(),
     ];
 
     let predifi_contract_address: ContractAddress = deploy_util("Predifi", predifi_call_data);
     let predifi_instance = IPredifiDispatcher { contract_address: predifi_contract_address };
-    let result = predifi_instance.create_pool(
-        poolName: 'Test Pool',
-        poolType: Pool::WinBet,
-        poolDescription: "Test Description",
-        poolImage: "test.jpg",
-        poolEventSourceUrl: "https://test.com",
-        poolStartTime: 1700000000,
-        poolLockTime: 1700001000,
-        poolEndTime: 1700002000,
-        option1: 'Team A',
-        option2: 'Team B',
-        minBetAmount: 1,
-        maxBetAmount: 100,
-        creatorFee: 5,
-        isPrivate: false,
-        category: Category::Sports,
-    );
-    
+    let result = predifi_instance
+        .create_pool(
+            poolName: 'Test Pool',
+            poolType: Pool::WinBet,
+            poolDescription: "Test Description",
+            poolImage: "test.jpg",
+            poolEventSourceUrl: "https://test.com",
+            poolStartTime: 1700000000,
+            poolLockTime: 1700001000,
+            poolEndTime: 1700002000,
+            option1: 'Team A',
+            option2: 'Team B',
+            minBetAmount: 1,
+            maxBetAmount: 100,
+            creatorFee: 5,
+            isPrivate: false,
+            category: Category::Sports,
+        );
+
     assert_eq!(result, true, "Result is supposed to be true");
     let pools = predifi_instance.get_active_pools();
     println!("Pools: {:?}", pools);
