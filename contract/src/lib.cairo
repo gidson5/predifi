@@ -11,4 +11,8 @@ pub mod presets {
     pub mod ERC20;
 }
 
+// pub mod components {
+//     pub mod pool_reading;
+// }
+
 pub mod predifi;

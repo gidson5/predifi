@@ -24,6 +24,16 @@ pub struct UserStake {
     pub option: felt252,
 }
 
+#[derive(Drop, Serde, PartialEq, starknet::Store, Clone)]
+pub struct PoolOdds {
+    pub option1_odds: u256, // Stored in basis points (10000 = 1.0)
+    pub option2_odds: u256,
+    pub option1_probability: u256, // Stored in basis points (10000 = 100%)
+    pub option2_probability: u256,
+    pub implied_probability1: u256,
+    pub implied_probability2: u256,
+}
+
 
 fn StatusType(status: Status) -> felt252 {
     match status {
@@ -54,6 +64,23 @@ pub enum Category {
     Other,
 }
 
+#[derive(Copy, Drop, Serde, PartialEq, Debug, starknet::Store)]
+pub enum ValidateOptions {
+    #[default]
+    Win,
+    Loss,
+    Void,
+}
+
+pub fn ValidateOptionsType(validate_option: ValidateOptions) -> felt252 {
+    match validate_option {
+        ValidateOptions::Win => 'win',
+        ValidateOptions::Loss => 'loss',
+        ValidateOptions::Void => 'void',
+    }
+}
+
+
 pub fn CategoryType(category: Category) -> felt252 {
     match category {
         Category::Sports => 'sports',
@@ -63,6 +90,21 @@ pub fn CategoryType(category: Category) -> felt252 {
         Category::Other => 'other',
     }
 }
+
+#[derive(Drop, Serde, PartialEq, Debug, starknet::Store, Clone)]
+pub struct ValidatorData {
+    pub status: bool,
+    pub preodifiTokenAmount: u256,
+}
+
+
+#[derive(Drop, Serde, PartialEq, Debug, starknet::Store, Clone)]
+pub struct WinaAndLoss {
+    pub win: u32,
+    pub loss: u32,
+    pub null: u32,
+}
+
 
 #[derive(Drop, Serde, PartialEq, Debug, starknet::Store, Clone)]
 pub struct PoolDetails {
@@ -75,21 +117,22 @@ pub struct PoolDetails {
     pub poolImage: ByteArray,
     // event url where users can see more event details and verify event
     pub poolEventSourceUrl: ByteArray,
+    pub createdTimeStamp: u64,
     // pool timings: start time, lock time, end time
-    pub poolStartTime: u256,
-    pub poolLockTime: u256,
-    pub poolEndTime: u256,
+    pub poolStartTime: u64,
+    pub poolLockTime: u64,
+    pub poolEndTime: u64,
     // pool options, the options that users can bet on
     pub option1: felt252,
     pub option2: felt252,
     // betamounts in strk
-    pub minBetAmount: u8,
-    pub maxBetAmount: u8,
+    pub minBetAmount: u256,
+    pub maxBetAmount: u256,
     // the fee that the creator gets
     pub creatorFee: u8,
     pub status: Status,
     pub isPrivate: bool,
-    pub category: felt252,
+    pub category: Category,
     pub totalBetAmountStrk: u256,
     pub totalBetCount: u8,
     pub totalStakeOption1: u256,

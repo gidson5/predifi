@@ -1,28 +1,26 @@
 #[starknet::contract]
 pub mod Predifi {
-    use starknet::storage::StoragePointerWriteAccess;
-    use starknet::storage::StoragePointerReadAccess;
+    use starknet::storage::{StoragePointerWriteAccess, StoragePointerReadAccess};
     use crate::interfaces::ipredifi::IPredifi;
     use crate::base::{
-        types::{PoolDetails, Status, UserStake, Pool, Category, CategoryType}, errors::Errors,
+        types::{
+            PoolDetails, Status, UserStake, Pool, Category, ValidatorData,
+            ValidateOptions, PoolOdds
+        },
+        errors::Errors,
     };
     use starknet::{
-        ContractAddress, get_caller_address, contract_address_const, get_contract_address,
+        ContractAddress, get_caller_address, get_contract_address,
+        get_block_timestamp,
     };
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use core::traits::Into;
-    // pragma lib importation
-    use pragma_lib::abi::{IRandomnessDispatcher, IRandomnessDispatcherTrait};
-
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::UpgradeableComponent;
-
     use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-    // use openzeppelin::upgrades::interface::IUpgradeable;
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
     component!(path: UpgradeableComponent, storage: upgradeable, event: UpgradeableEvent);
-
 
     #[abi(embed_v0)]
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
@@ -38,27 +36,25 @@ pub mod Predifi {
         #[flat]
         UpgradeableEvent: UpgradeableComponent::Event,
     }
+
     #[storage]
     struct Storage {
-        // making the contract ownable by someone
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
         #[substorage(v0)]
         upgradeable: UpgradeableComponent::Storage,
-        // a vec to store all the pools
         pools_mapping: Map<u32, PoolDetails>,
         poolStakeData: Map<(u32, ContractAddress), UserStake>,
-        // this is for the pool, the pool id the user that staked and the amount he staked
+        poolResult: Map<u32, ValidateOptions>,
         pools_len: u32,
         strk_token: ContractAddress,
-        // pragma needs
-        randomness_contract_address: ContractAddress,
         predifi_token_address: ContractAddress,
-        last_random: felt252,
         pending_pools: Map<u32, bool>, // Track pools waiting for IDs   
         user_wins: Map<ContractAddress, u32>,
         user_losses: Map<ContractAddress, u32>,
         user_total_bets: Map<ContractAddress, u32>,
+        validators: Map<ContractAddress, ValidatorData>,
+        get_all_pools_user_voted: Map<ContractAddress, u32>,
     }
 
     #[constructor]
@@ -71,8 +67,6 @@ pub mod Predifi {
     ) {
         self.ownable.initializer(owner);
         self.strk_token.write(strk_address);
-        // pragma writng the randomness contract address
-        self.randomness_contract_address.write(randomness_contract_address);
         self.predifi_token_address.write(predifi_token_address);
         self.pools_len.write(0);
     }
@@ -93,13 +87,13 @@ pub mod Predifi {
             poolDescription: ByteArray,
             poolImage: ByteArray,
             poolEventSourceUrl: ByteArray,
-            poolStartTime: u256,
-            poolLockTime: u256,
-            poolEndTime: u256,
+            poolStartTime: u64,
+            poolLockTime: u64,
+            poolEndTime: u64,
             option1: felt252,
             option2: felt252,
-            minBetAmount: u8,
-            maxBetAmount: u8,
+            minBetAmount: u256,
+            maxBetAmount: u256,
             creatorFee: u8,
             isPrivate: bool,
             category: Category,
@@ -130,29 +124,6 @@ pub mod Predifi {
             let new_pool_len: u32 = current_pool_len + 1;
             self.pools_len.write(new_pool_len);
 
-            // let randomness_dispatcher = IRandomnessDispatcher {
-            //     contract_address: self.randomness_contract_address.read(),
-            // };
-
-            // Configure randomness request
-            // let seed: u64 = current_pool_len.try_into().unwrap();
-            // let callback_address = get_contract_address();
-            // let callback_fee_limit = 100000000000000;
-            // let publish_delay = 1;
-            // let num_words = 10;
-            // let mut calldata = ArrayTrait::<felt252>::new();
-            // calldata.append(current_pool_len.try_into().unwrap());
-
-            // randomness_dispatcher
-            //     .request_random(
-            //         seed.try_into().unwrap(),
-            //         callback_address,
-            //         callback_fee_limit,
-            //         publish_delay,
-            //         num_words,
-            //         calldata,
-            //     );
-
             let details = PoolDetails {
                 pool_id: 0,
                 address: get_contract_address(),
@@ -161,6 +132,7 @@ pub mod Predifi {
                 poolDescription: poolDescription,
                 poolImage: poolImage,
                 poolEventSourceUrl: poolEventSourceUrl,
+                createdTimeStamp: get_block_timestamp(),
                 poolStartTime: poolStartTime,
                 poolLockTime: poolLockTime,
                 poolEndTime: poolEndTime,
@@ -171,7 +143,7 @@ pub mod Predifi {
                 creatorFee: creatorFee,
                 status: Status::Active,
                 isPrivate: isPrivate,
-                category: CategoryType(category),
+                category: category,
                 totalBetAmountStrk: 0,
                 totalBetCount: 0,
                 totalStakeOption1: 0,
@@ -183,34 +155,15 @@ pub mod Predifi {
 
             self.pending_pools.write(current_pool_len.try_into().unwrap(), true);
             self.pools_mapping.write(new_pool_len, details);
-            // current_pool_len
             true
         }
-
-        fn receive_random_words(
-            ref self: ContractState,
-            requestor_address: ContractAddress,
-            request_id: u64,
-            random_words: Span<felt252>,
-            calldata: Array<felt252>,
-        ) {
-            assert(
-                get_caller_address() == self.randomness_contract_address.read(), 'Invalid caller',
-            );
-            let random_word = *random_words.at(0);
-            let pool_id_u32: u32 = (request_id % 0x100000000).try_into().unwrap();
-            let mut pool = self.pools_mapping.read(pool_id_u32);
-            pool.pool_id = random_word.try_into().unwrap();
-            self.pools_mapping.write(pool_id_u32, pool);
-            self.pending_pools.write(pool_id_u32, false);
-        }
-
 
         fn vote_in_pool(
             ref self: ContractState, pool_id: u32, amount: u256, option: felt252,
         ) -> bool {
             assert(self.assert_vote_values(pool_id, amount, option), Errors::INVALID_VOTE_DETAILS);
             assert(self.transfer_amount_from_user(amount, get_caller_address()), 'Transfer failed');
+            assert(!self.is_ended(pool_id), Errors::LOCKED_PREDICTION_POOL);
 
             let mut pool = self.pools_mapping.read(pool_id);
             let caller = get_caller_address();
@@ -241,13 +194,14 @@ pub mod Predifi {
             let mut user_stake = UserStake { amount: amount, shares: shares, option: option };
             self.pools_mapping.write(pool_id, pool);
             self.poolStakeData.write((pool_id, caller), user_stake);
-
             true
         }
+
         fn upgrade(ref self: ContractState, new_class_hash: starknet::class_hash::ClassHash) {
             self.ownable.assert_only_owner();
             self.upgradeable.upgrade(new_class_hash);
         }
+
         fn get_all_pools(self: @ContractState) -> Array<PoolDetails> {
             let mut pool_array = array![];
             let pools_len = self.pools_len.read();
@@ -261,6 +215,7 @@ pub mod Predifi {
             };
             pool_array
         }
+
         fn get_active_pools(self: @ContractState) -> Array<PoolDetails> {
             let mut pool_array = array![];
             let pools_len = self.pools_len.read();
@@ -333,6 +288,23 @@ pub mod Predifi {
             };
             pool_array
         }
+        fn get_pools_by_category(self: @ContractState, category: Category) -> Array<PoolDetails> {
+            let mut pool_array = array![];
+            let pool_len = self.pools_len.read();
+            let mut i: u32 = 1;
+
+            loop {
+                if i > pool_len {
+                    break;
+                }
+                let pool = self.pools_mapping.read(i);
+                if pool.category == category {
+                    pool_array.append(pool);
+                }
+                i += 1;
+            };
+            pool_array
+        }
 
         fn get_user_wins(self: @ContractState, user: ContractAddress) -> u32 {
             self.user_wins.read(user)
@@ -345,17 +317,122 @@ pub mod Predifi {
         fn get_user_total_bets(self: @ContractState, user: ContractAddress) -> u32 {
             self.user_total_bets.read(user)
         }
+        fn get_all_pools_user_voted(self: @ContractState) -> Array<PoolDetails> {
+            let pool_id_list = self.get_all_pools_user_voted.read(get_caller_address());
+            let mut pool_array = array![];
+            let mut i: u32 = 1;
 
-        fn validate_pool(ref self: ContractState, pool_id: u32, option: felt252) -> bool {
+            loop {
+                if i > pool_id_list {
+                    break;
+                }
+                let pool = self.pools_mapping.read(i);
+                pool_array.append(pool);
+                i += 1;
+            };
+            pool_array
+        }
+
+
+        fn validate_pool(ref self: ContractState, pool_id: u32, option: ValidateOptions) -> bool {
             let pool = self.pools_mapping.read(pool_id);
             assert(pool.status == Status::Active, 'Pool is not active');
-            assert(option == pool.option1 || option == pool.option2, 'Invalid option');
-            let predifi_token = IERC20Dispatcher {
-                contract_address: self.predifi_token_address.read(),
-            };
-            assert(predifi_token.balance_of(get_caller_address()) >= 10000, 'Insufficient tokens');
-            // assert()
+            // let predifi_token = IERC20Dispatcher {
+            //     contract_address: self.predifi_token_address.read(),
+            // };
+            let validator_data = self.validators.read(get_caller_address());
+            assert(validator_data.preodifiTokenAmount >= 10000, 'not enough tokens to validate');
+            self.poolResult.write(pool_id, option);
             true
+        }
+        fn claim(ref self: ContractState, pool_id: u32) -> bool {
+            true
+        }
+        fn get_pool_odds(self: @ContractState, pool_id: u32) -> PoolOdds {
+            let pool = self.pools_mapping.read(pool_id);
+
+            let total_pool = pool.totalStakeOption1 + pool.totalStakeOption2;
+
+            let (prob1, prob2) = if total_pool == 0 {
+                (5000, 5000) // 50-50 if no stakes
+            } else {
+                let prob1 = (pool.totalStakeOption1 * 10000) / total_pool;
+                (prob1, 10000 - prob1)
+            };
+
+            let odds1 = if prob1 == 0 {
+                0
+            } else {
+                (10000 * 10000) / prob1
+            };
+            let odds2 = if prob2 == 0 {
+                0
+            } else {
+                (10000 * 10000) / prob2
+            };
+
+            let margin = 200;
+            let implied_total = 10000 + margin;
+            let implied_prob1 = (prob1 * implied_total) / 10000;
+            let implied_prob2 = (prob2 * implied_total) / 10000;
+
+            PoolOdds {
+                option1_odds: odds1,
+                option2_odds: odds2,
+                option1_probability: prob1,
+                option2_probability: prob2,
+                implied_probability1: implied_prob1,
+                implied_probability2: implied_prob2,
+            }
+        }
+        fn calculate_potential_payout(
+            self: @ContractState, pool_id: u32, stake_amount: u256, option: felt252,
+        ) -> u256 {
+            let pool = self.pools_mapping.read(pool_id);
+            let odds = self.get_pool_odds(pool_id);
+
+            if option == pool.option1 {
+                (stake_amount * odds.option1_odds) / 10000
+            } else {
+                (stake_amount * odds.option2_odds) / 10000
+            }
+        }
+
+        fn get_share_price(self: @ContractState, pool_id: u32, option: felt252) -> u256 {
+            let pool = self.pools_mapping.read(pool_id);
+
+            if option == pool.option1 {
+                if pool.totalSharesOption1 == 0 {
+                    pool.initial_share_price.into()
+                } else {
+                    (pool.totalStakeOption1 * 10000) / pool.totalSharesOption1
+                }
+            } else {
+                if pool.totalSharesOption2 == 0 {
+                    pool.initial_share_price.into()
+                } else {
+                    (pool.totalStakeOption2 * 10000) / pool.totalSharesOption2
+                }
+            }
+        }
+
+        fn get_liquidity_depth(
+            self: @ContractState, pool_id: u32, price_point: u256,
+        ) -> (u256, u256) {
+            let pool = self.pools_mapping.read(pool_id);
+            let liquidity_option1 = if pool.totalSharesOption1 == 0 {
+                0
+            } else {
+                (pool.totalStakeOption1 * price_point) / 10000
+            };
+
+            let liquidity_option2 = if pool.totalSharesOption2 == 0 {
+                0
+            } else {
+                (pool.totalStakeOption2 * price_point) / 10000
+            };
+
+            (liquidity_option1, liquidity_option2)
         }
     }
 
@@ -369,6 +446,7 @@ pub mod Predifi {
             let strk = IERC20Dispatcher { contract_address: strk_address };
             // Transfer STRK tokens from the caller to this contract
             assert(strk.transfer_from(caller, get_contract_address(), amount), 'Transfer failed');
+
             true
         }
 
@@ -379,20 +457,20 @@ pub mod Predifi {
             poolDescription: ByteArray,
             poolImage: ByteArray,
             poolEventSourceUrl: ByteArray,
-            poolStartTime: u256,
-            poolLockTime: u256,
-            poolEndTime: u256,
+            poolStartTime: u64,
+            poolLockTime: u64,
+            poolEndTime: u64,
             option1: felt252,
             option2: felt252,
-            minBetAmount: u8,
-            maxBetAmount: u8,
+            minBetAmount: u256,
+            maxBetAmount: u256,
             creatorFee: u8,
             isPrivate: bool,
             category: Category,
         ) -> bool {
-            let end_time: u256 = poolEndTime.try_into().unwrap();
-            let lock_time: u256 = poolLockTime.try_into().unwrap();
-            let start_time: u256 = poolStartTime.try_into().unwrap();
+            let end_time: u64 = poolEndTime.try_into().unwrap();
+            let lock_time: u64 = poolLockTime.try_into().unwrap();
+            let start_time: u64 = poolStartTime.try_into().unwrap();
 
             // Assert that end time is greater than lock time
             assert(end_time > lock_time, 'invalid end time');
@@ -428,10 +506,18 @@ pub mod Predifi {
 
             // Assert that amount is greater than 0
             assert(amount > 0, 'Amount must be greater than 0');
-
             // Assert that option is valid
             assert(option == pool.option1 || option == pool.option2, 'Invalid option');
             true
+        }
+
+        fn is_ended(ref self: ContractState, pool_id: u32) -> bool {
+            let pool = self.pools_mapping.read(pool_id);
+            let current_time = get_block_timestamp();
+            if pool.poolEndTime < current_time {
+                return true;
+            }
+            false
         }
     }
 }

@@ -1,4 +1,4 @@
-use crate::base::types::{PoolDetails, Pool, Status, Category};
+use crate::base::types::{PoolDetails, Pool, Category, ValidateOptions, PoolOdds};
 use starknet::ContractAddress;
 
 #[starknet::interface]
@@ -10,13 +10,13 @@ pub trait IPredifi<TContractState> {
         poolDescription: ByteArray,
         poolImage: ByteArray,
         poolEventSourceUrl: ByteArray,
-        poolStartTime: u256,
-        poolLockTime: u256,
-        poolEndTime: u256,
+        poolStartTime: u64,
+        poolLockTime: u64,
+        poolEndTime: u64,
         option1: felt252,
         option2: felt252,
-        minBetAmount: u8,
-        maxBetAmount: u8,
+        minBetAmount: u256,
+        maxBetAmount: u256,
         creatorFee: u8,
         isPrivate: bool,
         category: Category,
@@ -27,20 +27,25 @@ pub trait IPredifi<TContractState> {
     fn vote_in_pool(ref self: TContractState, pool_id: u32, amount: u256, option: felt252) -> bool;
     fn get_locked_pools(self: @TContractState) -> Array<PoolDetails>;
     fn get_closed_pools(self: @TContractState) -> Array<PoolDetails>;
-    fn receive_random_words(
-        ref self: TContractState,
-        requestor_address: ContractAddress,
-        request_id: u64,
-        random_words: Span<felt252>,
-        calldata: Array<felt252>,
-    );
-    fn validate_pool(ref self: TContractState, pool_id: u32, option: felt252) -> bool;
+
+    fn validate_pool(ref self: TContractState, pool_id: u32, option: ValidateOptions) -> bool;
     fn get_pools_by_contract_address(
         self: @TContractState, contract_address: ContractAddress,
     ) -> Array<PoolDetails>;
+    fn get_pools_by_category(self: @TContractState, category: Category) -> Array<PoolDetails>;
     fn get_user_wins(self: @TContractState, user: ContractAddress) -> u32;
     fn get_user_losses(self: @TContractState, user: ContractAddress) -> u32;
     fn get_user_total_bets(self: @TContractState, user: ContractAddress) -> u32;
+    fn get_all_pools_user_voted(self: @TContractState) -> Array<PoolDetails>;
+    fn claim(ref self: TContractState, pool_id: u32) -> bool;
+
+
+    fn get_pool_odds(self: @TContractState, pool_id: u32) -> PoolOdds;
+    fn calculate_potential_payout(
+        self: @TContractState, pool_id: u32, stake_amount: u256, option: felt252,
+    ) -> u256;
+    fn get_share_price(self: @TContractState, pool_id: u32, option: felt252) -> u256;
+    fn get_liquidity_depth(self: @TContractState, pool_id: u32, price_point: u256) -> (u256, u256);
     // fn update_pool_result(ref self: TContractState, pool_id: u32, winning_option: felt252);
 // many other get functions, get wins, get losses get total bet, more storage like that, a
 // struct that has all info about the user, current pools hes active on, and many other things
