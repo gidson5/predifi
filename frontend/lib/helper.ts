@@ -1,41 +1,36 @@
-export function addressSlice(address: string ) {
-  const userAddressStart = address.slice(0,6)
+// Helper function to short address
+export function addressSlice(address: string) {
+  const userAddressStart = address.slice(0, 6);
   const userAddressEnd = address.slice(-5);
 
-  return `${userAddressStart}...${userAddressEnd}`
+  return `${userAddressStart}...${userAddressEnd}`;
 }
 
+// Helper function to convert hex to decimal and format it
+export const formatAmount = (hex: number) => {
+  const decimal = parseInt(hex.toString(), 16);
+  return decimal.toString();
+};
 
+export function felt252ToString(feltValue: number) {
+  // Convert the Felt252 value to a hexadecimal string
+  let hex = feltValue.toString(16);
 
-//import app from "@/firebase/config";
-//import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-//const imageRef = useRef<HTMLInputElement>(null);
-//  async function onSubmit(e: React.FormEvent) {
-//    e.preventDefault();
-//    const data = imageRef.current?.files;
-//    // if image is empty
-//    if (!data) {
-//      console.log("no image"); // no image
-//      return;
-//    }
-//    const storage = getStorage(app);
+  // Add leading zeroes if the hex string length is not a multiple of 2
+  if (hex.length % 2 !== 0) hex = "0" + hex;
 
-//    // Create the file metadata
-//    const metadata = {
-//      contentType: "image/jpeg",
-//    };
-//    const date = new Date().getMilliseconds();
-//    // Upload file and metadata to the object 'images/mountains.jpg'
-//    const storageRef = ref(storage, `poolImage/${data[0]?.name}-${date}`);
+  // Convert the hex string to a readable ASCII string
+  let result = "";
+  for (let i = 0; i < hex.length; i += 2) {
+    const charCode = parseInt(hex.substr(i, 2), 16);
+    result += String.fromCharCode(charCode);
+  }
 
-//    // upload image to firebase storage
-//    if (data.length > 0) {
-//      const snapshot = await uploadBytesResumable(storageRef, data[0], metadata);
-//      console.log("Uploaded a blob or file!", snapshot);
-//      const imgUrl = await getDownloadURL(snapshot.ref);
-//      console.log("imgUrl", imgUrl);
-//      console.log("snapshot", snapshot);
-//    }
+  return result;
+}
 
-//    console.log("submit");
-//  }
+// Helper function to short large sentence
+export function sliceWithEllipsis(text: string,number:number): string {
+  if (text.length <= number) return text;
+  return text.slice(0, number) + "...";
+}

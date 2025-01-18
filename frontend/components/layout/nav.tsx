@@ -25,7 +25,7 @@ function Nav() {
           <Link href={routes.home} className="text-xl font-normal">
             PrediFi
           </Link>
-          <div className="flex justify-between items-center gap-4">
+          <div className="hidden justify-between items-center gap-4 sm:flex">
             <h3>Features</h3>
             <h3>How it works</h3>
           </div>
