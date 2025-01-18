@@ -1,18 +1,18 @@
 import { Moment } from "moment";
+import { AccountInterface } from "starknet";
 
 export type modal = {
   setIsOpen: () => void;
 };
 
-type poolType = "win bet" | "vote bet" | "over under bet" | "parlay pool"
-
-type status = "active"| "locked" | "settled" | "closed"
-
-type category = "sport" | "culture" | "politics" | "others"
+export type poolModal ={
+  modalHandle:()=>void;
+  sendFn:()=>void;
+}
 
 export interface creatorInputs{
   name: string;
-  betType: poolType;
+  betType: number;
   description: string;
   eventDetailsUrl: string;
   startDate: Moment | string;
@@ -24,6 +24,35 @@ export interface creatorInputs{
   optionOne: string;
   optionTwo: string;
   poolImage:string;
-  status:status,
-  category:category
+  status:number,
+  category:number
 };
+
+export interface creatoHook {
+  poolDemoImage: string;
+  poolEnd: Moment | string;
+  poolStart: Moment | string;
+  poolLock: Moment | string;
+  setEndDate: (x: number) => void;
+  setLockDate: (x: number) => void;
+  setImage: (x: null| string) => void;
+  setStartDate: (x: number) => void;
+}
+
+export type sendFnType = {
+  account: AccountInterface | undefined;
+  endDate: number ;
+  lockDate: number ;
+  startDate: number;
+  poolName:string;
+  poolType:number;
+  poolDetail:string;
+  image:FileList | string | File;
+  poolUrl:string;
+  poolOptionA:string;
+  poolOptionB:string;
+  poolMin:number;
+  poolMax:number;
+  poolCreatorFee:number;
+  poolCategory:number;
+}; 

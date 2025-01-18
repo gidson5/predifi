@@ -1,16 +1,20 @@
 import { Button } from "@/components/ui/button";
 import BackArrow from "@/svg/back-arrow"
+import { poolModal } from "@/type/type";
 import Image from "next/image";
 
-function CreatePoolModal(){
+function CreatePoolModal({modalHandle,sendFn}:poolModal){
     return (
       <div className="relative">
         <div
           className="fixed h-screen w-full bg-[#868686]/20 backdrop-blur-md top-0 left-0"
-          //onClick={setIsOpen}
+          onClick={modalHandle}
         />
-        <div className="w-4/5 max-h-[467px] z-50 h-fit bg-[#1E1E1E] top-1/2 right-1/2 fixed -translate-y-[50%] translate-x-[50%] rounded-lg border border-[#fff] py-6 px-4">
-          <div className=" border-b border-[#373737] flex items-center p-2 gap-2 mb-5">
+        <div className="w-4/5 max-h-[500px] mmin-h-[467px]  z-50 h-fit bg-[#1E1E1E] top-1/2 right-1/2 fixed -translate-y-[50%] translate-x-[50%] rounded-lg border border-[#fff] py-6 px-4">
+          <div
+            className=" border-b border-[#373737] flex items-center p-2 gap-2 mb-5"
+            onClick={modalHandle}
+          >
             <BackArrow />
             <span>Go back</span>
           </div>
@@ -44,7 +48,9 @@ function CreatePoolModal(){
                   </div>
                   <div className="grid gap-2">
                     <div className="grid gap-2 grid-cols-2">
-                      <Button className="rounded-full">Yes: PredFi to win</Button>
+                      <Button className="rounded-full">
+                        Yes: PredFi to win
+                      </Button>
                       <Button className="rounded-full">&10</Button>
                     </div>
                     <Button className="w-full rounded-full">Commit</Button>
@@ -63,6 +69,13 @@ function CreatePoolModal(){
               </div>
             </div>
           </div>
+          <Button
+            type="button"
+            className="justify-self-end my-2 "
+            onClick={sendFn}
+          >
+            create pool
+          </Button>
         </div>
       </div>
     );

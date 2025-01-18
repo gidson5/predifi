@@ -658,5 +658,3 @@ export const abi = [
     ],
   },
 ] as const;
-export const predifiContractAddress =
-  "0x05a940eadbffd7d4c920fa42e857215da7791b63168e49fa34fccb621e802299";
