@@ -33,7 +33,7 @@ export default function RootLayout({
       >
         <StarknetProvider>
           <Nav />
-          <section className="mt-14 min-h-screen pb-14">{children}</section>
+          <section className="max-w-screen-[1500px] mx-auto mt-14 min-h-screen pb-14">{children}</section>
           <Footer />
         </StarknetProvider>
       </body>
