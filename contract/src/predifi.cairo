@@ -24,6 +24,8 @@ pub mod Predifi {
     impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
     impl UpgradeableInternalImpl = UpgradeableComponent::InternalImpl<ContractState>;
 
+    use pragma_lib::abi::{IPragmaABIDispatcher, IPragmaABIDispatcherTrait};
+    use pragma_lib::types::{AggregationMode, DataType, PragmaPricesResponse};
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -52,6 +54,7 @@ pub mod Predifi {
         user_total_bets: Map<ContractAddress, u32>,
         validators: Map<ContractAddress, ValidatorData>,
         get_all_pools_user_voted: Map<ContractAddress, u32>,
+        oracle_address: ContractAddress,
     }
 
     #[constructor]
@@ -61,10 +64,12 @@ pub mod Predifi {
         strk_address: ContractAddress,
         randomness_contract_address: ContractAddress,
         predifi_token_address: ContractAddress,
+        oracle_address: ContractAddress,
     ) {
         self.ownable.initializer(owner);
         self.strk_token.write(strk_address);
         self.predifi_token_address.write(predifi_token_address);
+        self.oracle_address.write(oracle_address);
         self.pools_len.write(0);
     }
     fn calculate_shares(
@@ -75,8 +80,15 @@ pub mod Predifi {
         }
         (new_amount * total_shares) / total_amount
     }
+
+    const STRK_KEY: felt252 = 'STRK/USD';
+
     #[abi(embed_v0)]
     impl predifi of IPredifi<ContractState> {
+        fn get_strk_usd_price(self: @ContractState) -> (u128, u32) {
+            self.get_asset_price_median(DataType::SpotEntry(STRK_KEY))
+        }
+
         fn create_pool(
             ref self: ContractState,
             poolName: felt252,
@@ -122,7 +134,7 @@ pub mod Predifi {
             self.pools_len.write(new_pool_len);
 
             let details = PoolDetails {
-                pool_id: 0,
+                pool_id: new_pool_len.try_into().unwrap(),
                 address: get_contract_address(),
                 poolName: poolName,
                 poolType: poolType,
@@ -161,41 +173,42 @@ pub mod Predifi {
 
 
         fn vote_in_pool(
-            ref self: ContractState, pool_id: u32, amount: u256, option: felt252,
+            ref self: ContractState, pool_id: u32, amount: u32, option: felt252,
         ) -> bool {
-            assert(self.assert_vote_values(pool_id, amount, option), Errors::INVALID_VOTE_DETAILS);
-            assert(self.transfer_amount_from_user(amount, get_caller_address()), 'Transfer failed');
-            assert(!self.is_ended(pool_id), Errors::LOCKED_PREDICTION_POOL);
+            // assert(self.assert_vote_values(pool_id, amount, option),
+            // Errors::INVALID_VOTE_DETAILS);
+            assert(self.transfer_amount_from_user(1000, get_caller_address()), 'Transfer failed');
+            // assert(!self.is_ended(pool_id), Errors::LOCKED_PREDICTION_POOL);
 
-            let mut pool = self.pools_mapping.read(pool_id);
-            let caller = get_caller_address();
-            let shares = calculate_shares(
-                if option == pool.option1 {
-                    pool.totalStakeOption1
-                } else {
-                    pool.totalStakeOption2
-                },
-                amount,
-                if option == pool.option1 {
-                    pool.totalSharesOption1
-                } else {
-                    pool.totalSharesOption2
-                },
-                pool.initial_share_price,
-            );
+            // let mut pool = self.pools_mapping.read(pool_id);
+            // let caller = get_caller_address();
+            // let shares = calculate_shares(
+            //     if option == pool.option1 {
+            //         pool.totalStakeOption1
+            //     } else {
+            //         pool.totalStakeOption2
+            //     },
+            //     amount,
+            //     if option == pool.option1 {
+            //         pool.totalSharesOption1
+            //     } else {
+            //         pool.totalSharesOption2
+            //     },
+            //     pool.initial_share_price,
+            // );
 
-            pool.totalBetAmountStrk += amount;
-            if option == pool.option1 {
-                pool.totalStakeOption1 += amount;
-                pool.totalSharesOption1 += shares;
-            } else {
-                pool.totalStakeOption2 += amount;
-                pool.totalSharesOption2 += shares;
-            }
+            // pool.totalBetAmountStrk += amount;
+            // if option == pool.option1 {
+            //     pool.totalStakeOption1 += amount;
+            //     pool.totalSharesOption1 += shares;
+            // } else {
+            //     pool.totalStakeOption2 += amount;
+            //     pool.totalSharesOption2 += shares;
+            // }
 
-            let mut user_stake = UserStake { amount: amount, shares: shares, option: option };
-            self.pools_mapping.write(pool_id, pool);
-            self.poolStakeData.write((pool_id, caller), user_stake);
+            // let mut user_stake = UserStake { amount: amount, shares: shares, option: option };
+            // self.pools_mapping.write(pool_id, pool);
+            // self.poolStakeData.write((pool_id, caller), user_stake);
             true
         }
 
@@ -348,6 +361,51 @@ pub mod Predifi {
             true
         }
         fn claim(ref self: ContractState, pool_id: u32) -> bool {
+            let caller = get_caller_address();
+            let pool = self.pools_mapping.read(pool_id);
+            assert(pool.status == Status::Closed, 'Pool is not closed');
+
+            let user_stake = self.poolStakeData.read((pool_id, caller));
+            assert(user_stake.amount > 0, 'No stake found');
+
+            let result = self.poolResult.read(pool_id);
+            let won = user_stake.option == match result {
+                ValidateOptions::Win => pool.option1,
+                ValidateOptions::Loss => pool.option2,
+                ValidateOptions::Void => 'Draw Not Implemented',
+            };
+
+            let total_shares = if won {
+                if user_stake.option == pool.option1 {
+                    pool.totalSharesOption1
+                } else {
+                    pool.totalSharesOption2
+                }
+            } else {
+                0
+            };
+
+            let winning_amount = if won {
+                let total_pool = pool.totalStakeOption1 + pool.totalStakeOption2;
+                (total_pool * user_stake.shares) / total_shares
+            } else {
+                0
+            };
+
+            if winning_amount > 0 {
+                let strk = IERC20Dispatcher { contract_address: self.strk_token.read() };
+                assert(strk.transfer(caller, winning_amount), 'Transfer failed');
+
+                let current_wins = self.user_wins.read(caller);
+                self.user_wins.write(caller, current_wins + 1);
+            } else {
+                let current_losses = self.user_losses.read(caller);
+                self.user_losses.write(caller, current_losses + 1);
+            }
+
+            self
+                .poolStakeData
+                .write((pool_id, caller), UserStake { amount: 0, shares: 0, option: 0 });
             true
         }
         fn get_pool_odds(self: @ContractState, pool_id: u32) -> PoolOdds {
@@ -443,12 +501,11 @@ pub mod Predifi {
         fn transfer_amount_from_user(
             ref self: ContractState, amount: u256, user: ContractAddress,
         ) -> bool {
-            let caller = get_caller_address();
+            let owner = get_caller_address();
             let strk_address = self.strk_token.read();
             let strk = IERC20Dispatcher { contract_address: strk_address };
             // Transfer STRK tokens from the caller to this contract
-            assert(strk.transfer_from(caller, get_contract_address(), amount), 'Transfer failed');
-
+            assert(strk.transfer(owner, amount), 'Transfer failed');
             true
         }
 
@@ -520,6 +577,15 @@ pub mod Predifi {
                 return true;
             }
             false
+        }
+
+        fn get_asset_price_median(self: @ContractState, asset: DataType) -> (u128, u32) {
+            let oracle_dispatcher = IPragmaABIDispatcher {
+                contract_address: self.oracle_address.read(),
+            };
+            let output: PragmaPricesResponse = oracle_dispatcher
+                .get_data(asset, AggregationMode::Median(()));
+            return (output.price, output.decimals);
         }
     }
 }

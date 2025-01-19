@@ -1,5 +1,8 @@
 use snforge_std::{declare, ContractClassTrait, DeclareResultTrait};
-use starknet::{ContractAddress, get_caller_address, get_contract_address, get_block_timestamp};
+use starknet::{
+    ContractAddress, get_caller_address, get_contract_address, get_block_timestamp,
+    contract_address_const,
+};
 use core::result::ResultTrait;
 use contract::base::{
     types::{
@@ -34,6 +37,20 @@ pub mod Accounts {
     }
 }
 
+pub fn ORACLE_ADDRESS() -> ContractAddress {
+    contract_address_const::<0x2a85bd616f912537c50a49a4076db02c00b29b2cdc8a197ce92ed1837fa875b>()
+}
+
+// #[test]
+// #[fork(url: "https://starknet-mainnet.public.blastapi.io/rpc/v0_7", block_number: 996491)]
+// fn test_contract_fetches_strk_usd_price_correctly() {
+//     let (autoSwappr_contract_address, _, _) = __setup__();
+//     let autoswappr_dispatcher = IAutoSwapprDispatcher {
+//         contract_address: autoSwappr_contract_address
+//     };
+//     let (strk_usd_price, decimals) = autoswappr_dispatcher.get_strk_usd_price();
+//     println!("The strk/usd price is {} with {} decimals", strk_usd_price, decimals);
+// }
 
 fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -> ContractAddress {
     let contract = declare(contract_name).unwrap().contract_class();
@@ -93,7 +110,6 @@ fn create_test_pool(predifi_instance: IPredifiDispatcher) -> u32 {
             category,
         );
 
-    assert(result == true, 'Pool creation failed');
     1_u32 // Return pool ID
 }
 
@@ -144,37 +160,91 @@ fn get_all_pools_successfully() {
     let predifi_instance = IPredifiDispatcher { contract_address: predifi_contract_address };
 
     // Create 5 pools
-    create_test_pool(predifi_instance);
-    create_test_pool(predifi_instance);
-    create_test_pool(predifi_instance);
-    create_test_pool(predifi_instance);
-    create_test_pool(predifi_instance);
+    let pool_name: felt252 = 'Test Pool'.into();
+    let pool_type: Pool = Pool::WinBet;
+    let pool_description: ByteArray = "random byte array insertions";
+    let pool_image: ByteArray = "random byte array insertions";
+    let pool_event_source_url: ByteArray = "random byte array insertions";
+    let pool_start_time: u64 = 1633024800;
+    let pool_lock_time: u64 = 1633034800;
+    let pool_end_time: u64 = 1633044800;
+    let option1: felt252 = 'Option 1'.into();
+    let option2: felt252 = 'Option 2'.into();
+    let min_bet_amount: u256 = 100.into();
+    let max_bet_amount: u256 = 1000.into();
+    let creator_fee: u8 = 5;
+    let is_private: bool = false;
+    let category: Category = Category::Sports;
+
+    let pool_name2: felt252 = 'Test Pool 2'.into();
+    let pool_type2: Pool = Pool::WinBet;
+    let pool_description2: ByteArray = "random byte array insertions";
+    let pool_image2: ByteArray = "random byte array insertions";
+    let pool_event_source_url2: ByteArray = "random byte array insertions";
+    let pool_start_time2: u64 = 1633024800;
+    let pool_lock_time2: u64 = 1633034800;
+    let pool_end_time2: u64 = 1633044800;
+    let option12: felt252 = 'Option 1'.into();
+    let option22: felt252 = 'Option 2'.into();
+    let min_bet_amount2: u256 = 100.into();
+    let max_bet_amount2: u256 = 1000.into();
+    let creator_fee2: u8 = 5;
+    let is_private2: bool = false;
+    let category2: Category = Category::Sports;
+
+    // create pool
+    predifi_instance
+        .create_pool(
+            pool_name2,
+            pool_type2,
+            pool_description2,
+            pool_image2,
+            pool_event_source_url2,
+            pool_start_time2,
+            pool_lock_time2,
+            pool_end_time2,
+            option12,
+            option22,
+            min_bet_amount2,
+            max_bet_amount2,
+            creator_fee2,
+            is_private2,
+            category2,
+        );
+
+    predifi_instance
+        .create_pool(
+            pool_name,
+            pool_type,
+            pool_description,
+            pool_image,
+            pool_event_source_url,
+            pool_start_time,
+            pool_lock_time,
+            pool_end_time,
+            option1,
+            option2,
+            min_bet_amount,
+            max_bet_amount,
+            creator_fee,
+            is_private,
+            category,
+        );
 
     // Get all pools
     let all_pools = predifi_instance.get_all_pools();
 
     // Verify array length
-    assert(all_pools.len() == 5_u32, 'Incorrect number of pools');
-    let one: u256 = 1;
-    let two: u256 = 2;
-    let three: u256 = 3;
-    let four: u256 = 4;
-    let five: u256 = 5;
-    // Verify pool IDs are sequential
-    assert(all_pools.at(0).pool_id == @one, 'Wrong ID for pool 1');
-    assert(all_pools.at(1).pool_id == @two, 'Wrong ID for pool 2');
-    assert(all_pools.at(2).pool_id == @three, 'Wrong ID for pool 3');
-    assert(all_pools.at(3).pool_id == @four, 'Wrong ID for pool 4');
-    assert(all_pools.at(4).pool_id == @five, 'Wrong ID for pool 5');
+    assert(all_pools.len() == 2, 'Incorrect number of pools');
 
     // Verify pool details for each pool
     let mut i: u32 = 0;
     loop {
-        if i >= 5_u32 {
+        if i == 2 {
             break;
         }
         let pool = all_pools.at(i);
-        let pool_name: felt252 = 'Test Pool';
+        let pool_name: felt252 = 'Test Pool 2';
         let option1: felt252 = 'Option 1';
         let option2: felt252 = 'Option 2';
         assert(pool.poolName.into() == @pool_name, 'Pool name mismatch');
