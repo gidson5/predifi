@@ -84,30 +84,8 @@ function CreatePoolForm() {
     await sendFn(data);
   }
 
-
-  const { account } = useAccount();
   if (account) {
     prediFiContract.connect(account);
-  }
-  async function createPoolFn() {
-    const data = {
-      poolName,
-      poolType,
-      poolDetail,
-      image: poolDemoImage,
-      poolUrl,
-      startDate: startDate ?? 0,
-      lockDate: lockDate ?? 0,
-      endDate: endDate ?? 0,
-      poolOptionA,
-      poolOptionB,
-      account,
-      poolMin,
-      poolMax,
-      poolCreatorFee,
-      poolCategory,
-    };
-    await sendFn(data);
   }
   console.log(isLoading,"loader")
   if(isLoading) return <Loading message="fetting pool data"/>

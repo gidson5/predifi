@@ -1,12 +1,12 @@
 export const abi = [
   {
-    name: "predifi",
     type: "impl",
+    name: "predifi",
     interface_name: "contract::interfaces::ipredifi::IPredifi",
   },
   {
-    name: "contract::base::types::Pool",
     type: "enum",
+    name: "contract::base::types::Pool",
     variants: [
       {
         name: "WinBet",
@@ -27,8 +27,8 @@ export const abi = [
     ],
   },
   {
-    name: "core::byte_array::ByteArray",
     type: "struct",
+    name: "core::byte_array::ByteArray",
     members: [
       {
         name: "data",
@@ -45,8 +45,8 @@ export const abi = [
     ],
   },
   {
-    name: "core::integer::u256",
     type: "struct",
+    name: "core::integer::u256",
     members: [
       {
         name: "low",
@@ -59,8 +59,8 @@ export const abi = [
     ],
   },
   {
-    name: "core::bool",
     type: "enum",
+    name: "core::bool",
     variants: [
       {
         name: "False",
@@ -73,8 +73,8 @@ export const abi = [
     ],
   },
   {
-    name: "contract::base::types::Category",
     type: "enum",
+    name: "contract::base::types::Category",
     variants: [
       {
         name: "Sports",
@@ -99,8 +99,8 @@ export const abi = [
     ],
   },
   {
-    name: "contract::base::types::ValidateOptions",
     type: "enum",
+    name: "contract::base::types::ValidateOptions",
     variants: [
       {
         name: "Win",
@@ -117,8 +117,8 @@ export const abi = [
     ],
   },
   {
-    name: "contract::base::types::Status",
     type: "enum",
+    name: "contract::base::types::Status",
     variants: [
       {
         name: "Active",
@@ -139,8 +139,8 @@ export const abi = [
     ],
   },
   {
-    name: "contract::base::types::PoolDetails",
     type: "struct",
+    name: "contract::base::types::PoolDetails",
     members: [
       {
         name: "pool_id",
@@ -249,8 +249,8 @@ export const abi = [
     ],
   },
   {
-    name: "contract::base::types::PoolOdds",
     type: "struct",
+    name: "contract::base::types::PoolOdds",
     members: [
       {
         name: "option1_odds",
@@ -279,12 +279,12 @@ export const abi = [
     ],
   },
   {
-    name: "contract::interfaces::ipredifi::IPredifi",
     type: "interface",
+    name: "contract::interfaces::ipredifi::IPredifi",
     items: [
       {
-        name: "create_pool",
         type: "function",
+        name: "create_pool",
         inputs: [
           {
             name: "poolName",
@@ -355,8 +355,8 @@ export const abi = [
         state_mutability: "external",
       },
       {
-        name: "validate_pool",
         type: "function",
+        name: "validate_pool",
         inputs: [
           {
             name: "pool_id",
@@ -375,8 +375,8 @@ export const abi = [
         state_mutability: "external",
       },
       {
-        name: "upgrade",
         type: "function",
+        name: "upgrade",
         inputs: [
           {
             name: "new_class_hash",
@@ -387,8 +387,8 @@ export const abi = [
         state_mutability: "external",
       },
       {
+        type: "function",
         name: "get_all_pools",
-        type: "function",
         inputs: [],
         outputs: [
           {
@@ -398,8 +398,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
+        type: "function",
         name: "get_active_pools",
-        type: "function",
         inputs: [],
         outputs: [
           {
@@ -409,8 +409,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
+        type: "function",
         name: "get_locked_pools",
-        type: "function",
         inputs: [],
         outputs: [
           {
@@ -420,8 +420,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
-        name: "get_closed_pools",
         type: "function",
+        name: "get_closed_pools",
         inputs: [],
         outputs: [
           {
@@ -430,8 +430,9 @@ export const abi = [
         ],
         state_mutability: "view",
       },
-        name: "get_pool_by_id",
+      {
         type: "function",
+        name: "get_pool_by_id",
         inputs: [
           {
             name: "pool_id",
@@ -446,8 +447,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
-        name: "get_pools_by_contract_address",
         type: "function",
+        name: "get_pools_by_contract_address",
         inputs: [
           {
             name: "contract_address",
@@ -462,8 +463,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
-        name: "get_pools_by_category",
         type: "function",
+        name: "get_pools_by_category",
         inputs: [
           {
             name: "category",
@@ -478,8 +479,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
-        name: "vote_in_pool",
         type: "function",
+        name: "vote_in_pool",
         inputs: [
           {
             name: "pool_id",
@@ -502,8 +503,8 @@ export const abi = [
         state_mutability: "external",
       },
       {
-        name: "claim",
         type: "function",
+        name: "claim",
         inputs: [
           {
             name: "pool_id",
@@ -518,8 +519,8 @@ export const abi = [
         state_mutability: "external",
       },
       {
+        type: "function",
         name: "get_user_wins",
-        type: "function",
         inputs: [
           {
             name: "user",
@@ -534,8 +535,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
+        type: "function",
         name: "get_user_losses",
-        type: "function",
         inputs: [
           {
             name: "user",
@@ -550,8 +551,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
+        type: "function",
         name: "get_user_total_bets",
-        type: "function",
         inputs: [
           {
             name: "user",
@@ -566,8 +567,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
-        name: "get_all_pools_user_voted",
         type: "function",
+        name: "get_all_pools_user_voted",
         inputs: [],
         outputs: [
           {
@@ -577,8 +578,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
-        name: "get_pool_odds",
         type: "function",
+        name: "get_pool_odds",
         inputs: [
           {
             name: "pool_id",
@@ -593,8 +594,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
-        name: "calculate_potential_payout",
         type: "function",
+        name: "calculate_potential_payout",
         inputs: [
           {
             name: "pool_id",
@@ -617,8 +618,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
-        name: "get_share_price",
         type: "function",
+        name: "get_share_price",
         inputs: [
           {
             name: "pool_id",
@@ -637,8 +638,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
-        name: "get_liquidity_depth",
         type: "function",
+        name: "get_liquidity_depth",
         inputs: [
           {
             name: "pool_id",
@@ -659,17 +660,17 @@ export const abi = [
     ],
   },
   {
-    name: "OwnableImpl",
     type: "impl",
+    name: "OwnableImpl",
     interface_name: "openzeppelin_access::ownable::interface::IOwnable",
   },
   {
-    name: "openzeppelin_access::ownable::interface::IOwnable",
     type: "interface",
+    name: "openzeppelin_access::ownable::interface::IOwnable",
     items: [
       {
-        name: "owner",
         type: "function",
+        name: "owner",
         inputs: [],
         outputs: [
           {
@@ -679,8 +680,8 @@ export const abi = [
         state_mutability: "view",
       },
       {
-        name: "transfer_ownership",
         type: "function",
+        name: "transfer_ownership",
         inputs: [
           {
             name: "new_owner",
@@ -691,8 +692,8 @@ export const abi = [
         state_mutability: "external",
       },
       {
-        name: "renounce_ownership",
         type: "function",
+        name: "renounce_ownership",
         inputs: [],
         outputs: [],
         state_mutability: "external",
@@ -700,8 +701,8 @@ export const abi = [
     ],
   },
   {
-    name: "constructor",
     type: "constructor",
+    name: "constructor",
     inputs: [
       {
         name: "owner",
@@ -722,94 +723,94 @@ export const abi = [
     ],
   },
   {
-    kind: "struct",
+    type: "event",
     name: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-    type: "event",
-    members: [
-      {
-        kind: "key",
-        name: "previous_owner",
-        type: "core::starknet::contract_address::ContractAddress",
-      },
-      {
-        kind: "key",
-        name: "new_owner",
-        type: "core::starknet::contract_address::ContractAddress",
-      },
-    ],
-  },
-  {
     kind: "struct",
-    name: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-    type: "event",
     members: [
       {
-        kind: "key",
         name: "previous_owner",
         type: "core::starknet::contract_address::ContractAddress",
+        kind: "key",
       },
       {
-        kind: "key",
         name: "new_owner",
         type: "core::starknet::contract_address::ContractAddress",
+        kind: "key",
       },
     ],
   },
   {
-    kind: "enum",
-    name: "openzeppelin_access::ownable::ownable::OwnableComponent::Event",
     type: "event",
+    name: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
+    kind: "struct",
+    members: [
+      {
+        name: "previous_owner",
+        type: "core::starknet::contract_address::ContractAddress",
+        kind: "key",
+      },
+      {
+        name: "new_owner",
+        type: "core::starknet::contract_address::ContractAddress",
+        kind: "key",
+      },
+    ],
+  },
+  {
+    type: "event",
+    name: "openzeppelin_access::ownable::ownable::OwnableComponent::Event",
+    kind: "enum",
     variants: [
       {
-        kind: "nested",
         name: "OwnershipTransferred",
         type: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferred",
+        kind: "nested",
       },
       {
-        kind: "nested",
         name: "OwnershipTransferStarted",
         type: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
+        kind: "nested",
       },
     ],
   },
   {
-    kind: "struct",
-    name: "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded",
     type: "event",
+    name: "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded",
+    kind: "struct",
     members: [
       {
-        kind: "data",
         name: "class_hash",
         type: "core::starknet::class_hash::ClassHash",
+        kind: "data",
       },
     ],
   },
   {
-    kind: "enum",
-    name: "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Event",
     type: "event",
+    name: "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Event",
+    kind: "enum",
     variants: [
       {
-        kind: "nested",
         name: "Upgraded",
         type: "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded",
+        kind: "nested",
       },
     ],
   },
   {
-    kind: "enum",
-    name: "contract::predifi::Predifi::Event",
     type: "event",
+    name: "contract::predifi::Predifi::Event",
+    kind: "enum",
     variants: [
       {
-        kind: "flat",
         name: "OwnableEvent",
         type: "openzeppelin_access::ownable::ownable::OwnableComponent::Event",
+        kind: "flat",
       },
       {
-        kind: "flat",
         name: "UpgradeableEvent",
         type: "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Event",
+        kind: "flat",
       },
     ],
   },
