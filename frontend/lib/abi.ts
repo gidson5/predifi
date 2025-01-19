@@ -430,7 +430,6 @@ export const abi = [
         ],
         state_mutability: "view",
       },
-      {
         name: "get_pool_by_id",
         type: "function",
         inputs: [

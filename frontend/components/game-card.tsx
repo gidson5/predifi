@@ -30,6 +30,7 @@ function GameCard({ data }:{data:poolData}) {
         <button className="w-fit border brder-[#373737] px-3 py-[2px] sm:py-2 text-center rounded-full capitalize">
           manage
         </button>
+
       </div>
     </div>
   );

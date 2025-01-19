@@ -4,6 +4,7 @@ function Profile() {
   return (
     <section className="flex justify-center md:justify-between gap-y-4 gap-4 items-center flex-wrap">
       {/* <GameCard />
+
       <GameCard />
       <GameCard />
       <GameCard />
