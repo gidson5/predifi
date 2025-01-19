@@ -144,11 +144,11 @@ fn get_all_pools_successfully() {
     let predifi_instance = IPredifiDispatcher { contract_address: predifi_contract_address };
 
     // Create 5 pools
-    let pool_id1 = create_test_pool(predifi_instance);
-    let pool_id2 = create_test_pool(predifi_instance);
-    let pool_id3 = create_test_pool(predifi_instance);
-    let pool_id4 = create_test_pool(predifi_instance);
-    let pool_id5 = create_test_pool(predifi_instance);
+    create_test_pool(predifi_instance);
+    create_test_pool(predifi_instance);
+    create_test_pool(predifi_instance);
+    create_test_pool(predifi_instance);
+    create_test_pool(predifi_instance);
 
     // Get all pools
     let all_pools = predifi_instance.get_all_pools();
