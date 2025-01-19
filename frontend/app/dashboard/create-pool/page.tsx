@@ -10,6 +10,7 @@ import { abi } from "@/lib/abi";
 import { useCreatePool } from "@/hooks/use-create-pool";
 import CreatePoolModal from "./components/create-pool-modal";
 import { prediFiContract, predifiContractAddress, sendFn } from "@/lib/send-fn";
+import Loading from "@/components/loading-spinner";
 
 function CreatePoolForm() {
   const [image, setImage] = useState<null | string>(null);
@@ -33,7 +34,7 @@ function CreatePoolForm() {
   const poolCreatorFee = watch("creatorsFee");
   //const poolshare = watch("privacy");
   const poolCategory = watch("category");
-  const { data: allPools } = useReadContract({
+  const { data: allPools,isLoading } = useReadContract({
     abi: abi,
     functionName: "get_all_pools",
     address: predifiContractAddress,
@@ -55,7 +56,7 @@ function CreatePoolForm() {
     setImage,
     setStartDate,
   });
-  console.log(poolDemoImage)
+
   const { account } = useAccount();
   if (account) {
     prediFiContract.connect(account);
@@ -80,7 +81,8 @@ function CreatePoolForm() {
     };
     await sendFn(data);
   }
-
+  console.log(isLoading,"loader")
+  if(isLoading) return <Loading message="fetting pool data"/>
   return (
     <>
       {isOpen && (
@@ -92,8 +94,8 @@ function CreatePoolForm() {
       <section>
         <h2>Create a pool</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-9">
-          <div className="grid grid-cols-3 gap-3">
-            <div className="flex gap-1 flex-col text-base place-self-end w-full">
+          <div className="md:grid sm:grid-cols-3 gap-3 flex flex-col-reverse">
+            <div className="flex gap-1 flex-col text-base place-self-end w-full order-1 sm:order-none">
               <label htmlFor="Name">Name</label>
               <input
                 type="text"
@@ -118,7 +120,7 @@ function CreatePoolForm() {
                 </option>
               </select>
             </div>
-            <div className="justify-self-end">
+            <div className="justify-self-end order-2 sm:order-none">
               {image == null && (
                 <div className="w-[111px] h-[111px] rounded-full bg-[#373737]" />
               )}
@@ -147,6 +149,7 @@ function CreatePoolForm() {
             <textarea
               id="description"
               className="border-[#373737] bg-inherit border rounded-[8px] h-[140px] w-full px-4 py-1 outline-none"
+              placeholder="pool description"
               {...register("description", { required: true })}
             />
           </div>
@@ -154,11 +157,12 @@ function CreatePoolForm() {
             <label htmlFor="Event-details-url">Event details URL</label>
             <input
               id="Event-details-url"
+              placeholder="pool url"
               {...register("eventDetailsUrl", { required: true })}
               className="border-[#373737] bg-inherit border rounded-[8px] h-[59px] w-full px-4 outline-none"
             />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="sm:grid sm:grid-cols-3 gap-3 flex flex-col">
             <DateInput
               data={{
                 name: "startDate",
@@ -181,7 +185,7 @@ function CreatePoolForm() {
               name="End-time"
             />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="sm:grid sm:grid-cols-3 gap-3 flex flex-col">
             <div className="flex gap-1 flex-col text-base place-self-end w-full">
               <label htmlFor="option-0ne">Option 1</label>
               <input
@@ -225,13 +229,14 @@ function CreatePoolForm() {
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="sm:grid sm:grid-cols-3 gap-3 flex flex-col">
             <div className="flex gap-1 flex-col text-base place-self-end w-full">
               <label htmlFor="min-bet-amount">Min bet amount</label>
               <input
                 type="number"
                 {...register("minBetAmount", { required: true })}
                 id="min-bet-amount"
+                placeholder="pool min stake amount"
                 className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4 outline-none"
               />
             </div>
@@ -242,6 +247,7 @@ function CreatePoolForm() {
                 {...register("maxBetAmount", { required: true })}
                 id="max-bet-amount"
                 className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4 outline-none"
+                placeholder="pool max stake amount"
               />
             </div>
             <div className="flex gap-1 flex-col place-self-end w-full">
@@ -250,8 +256,8 @@ function CreatePoolForm() {
                 type="number"
                 id="creators-fee"
                 {...register("creatorsFee", { required: true, max: 5 })}
-                placeholder="5"
-                //max="5"
+                placeholder="max is 5"
+                max="5"
                 className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4 outline-none"
               />
             </div>

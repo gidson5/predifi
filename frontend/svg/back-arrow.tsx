@@ -10,9 +10,9 @@ function BackArrow(){
         <path
           d="M3.33301 9.99983H16.6663"
           stroke="#CCCCCC"
-          stroke-width="1.25"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="1.25"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M7.49965 14.1667C7.49965 14.1667 3.33302 11.098 3.33301 9.99999C3.333 8.90199 7.49967 5.83333 7.49967 5.83333"

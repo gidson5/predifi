@@ -99,6 +99,24 @@ export const abi = [
     ],
   },
   {
+    name: "contract::base::types::ValidateOptions",
+    type: "enum",
+    variants: [
+      {
+        name: "Win",
+        type: "()",
+      },
+      {
+        name: "Loss",
+        type: "()",
+      },
+      {
+        name: "Void",
+        type: "()",
+      },
+    ],
+  },
+  {
     name: "contract::base::types::Status",
     type: "enum",
     variants: [
@@ -153,16 +171,20 @@ export const abi = [
         type: "core::byte_array::ByteArray",
       },
       {
+        name: "createdTimeStamp",
+        type: "core::integer::u64",
+      },
+      {
         name: "poolStartTime",
-        type: "core::integer::u256",
+        type: "core::integer::u64",
       },
       {
         name: "poolLockTime",
-        type: "core::integer::u256",
+        type: "core::integer::u64",
       },
       {
         name: "poolEndTime",
-        type: "core::integer::u256",
+        type: "core::integer::u64",
       },
       {
         name: "option1",
@@ -174,11 +196,11 @@ export const abi = [
       },
       {
         name: "minBetAmount",
-        type: "core::integer::u8",
+        type: "core::integer::u256",
       },
       {
         name: "maxBetAmount",
-        type: "core::integer::u8",
+        type: "core::integer::u256",
       },
       {
         name: "creatorFee",
@@ -194,7 +216,7 @@ export const abi = [
       },
       {
         name: "category",
-        type: "core::felt252",
+        type: "contract::base::types::Category",
       },
       {
         name: "totalBetAmountStrk",
@@ -227,12 +249,32 @@ export const abi = [
     ],
   },
   {
-    name: "core::array::Span::<core::felt252>",
+    name: "contract::base::types::PoolOdds",
     type: "struct",
     members: [
       {
-        name: "snapshot",
-        type: "@core::array::Array::<core::felt252>",
+        name: "option1_odds",
+        type: "core::integer::u256",
+      },
+      {
+        name: "option2_odds",
+        type: "core::integer::u256",
+      },
+      {
+        name: "option1_probability",
+        type: "core::integer::u256",
+      },
+      {
+        name: "option2_probability",
+        type: "core::integer::u256",
+      },
+      {
+        name: "implied_probability1",
+        type: "core::integer::u256",
+      },
+      {
+        name: "implied_probability2",
+        type: "core::integer::u256",
       },
     ],
   },
@@ -266,15 +308,15 @@ export const abi = [
           },
           {
             name: "poolStartTime",
-            type: "core::integer::u256",
+            type: "core::integer::u64",
           },
           {
             name: "poolLockTime",
-            type: "core::integer::u256",
+            type: "core::integer::u64",
           },
           {
             name: "poolEndTime",
-            type: "core::integer::u256",
+            type: "core::integer::u64",
           },
           {
             name: "option1",
@@ -286,11 +328,11 @@ export const abi = [
           },
           {
             name: "minBetAmount",
-            type: "core::integer::u8",
+            type: "core::integer::u256",
           },
           {
             name: "maxBetAmount",
-            type: "core::integer::u8",
+            type: "core::integer::u256",
           },
           {
             name: "creatorFee",
@@ -313,15 +355,24 @@ export const abi = [
         state_mutability: "external",
       },
       {
-        name: "get_all_pools",
+        name: "validate_pool",
         type: "function",
-        inputs: [],
-        outputs: [
+        inputs: [
           {
-            type: "core::array::Array::<contract::base::types::PoolDetails>",
+            name: "pool_id",
+            type: "core::integer::u32",
+          },
+          {
+            name: "option",
+            type: "contract::base::types::ValidateOptions",
           },
         ],
-        state_mutability: "view",
+        outputs: [
+          {
+            type: "core::bool",
+          },
+        ],
+        state_mutability: "external",
       },
       {
         name: "upgrade",
@@ -336,9 +387,90 @@ export const abi = [
         state_mutability: "external",
       },
       {
+        name: "get_all_pools",
+        type: "function",
+        inputs: [],
+        outputs: [
+          {
+            type: "core::array::Array::<contract::base::types::PoolDetails>",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
         name: "get_active_pools",
         type: "function",
         inputs: [],
+        outputs: [
+          {
+            type: "core::array::Array::<contract::base::types::PoolDetails>",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_locked_pools",
+        type: "function",
+        inputs: [],
+        outputs: [
+          {
+            type: "core::array::Array::<contract::base::types::PoolDetails>",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_closed_pools",
+        type: "function",
+        inputs: [],
+        outputs: [
+          {
+            type: "core::array::Array::<contract::base::types::PoolDetails>",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_pool_by_id",
+        type: "function",
+        inputs: [
+          {
+            name: "pool_id",
+            type: "core::integer::u32",
+          },
+        ],
+        outputs: [
+          {
+            type: "contract::base::types::PoolDetails",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_pools_by_contract_address",
+        type: "function",
+        inputs: [
+          {
+            name: "contract_address",
+            type: "core::starknet::contract_address::ContractAddress",
+          },
+        ],
+        outputs: [
+          {
+            type: "core::array::Array::<contract::base::types::PoolDetails>",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_pools_by_category",
+        type: "function",
+        inputs: [
+          {
+            name: "category",
+            type: "contract::base::types::Category",
+          },
+        ],
         outputs: [
           {
             type: "core::array::Array::<contract::base::types::PoolDetails>",
@@ -371,62 +503,12 @@ export const abi = [
         state_mutability: "external",
       },
       {
-        name: "get_locked_pools",
-        type: "function",
-        inputs: [],
-        outputs: [
-          {
-            type: "core::array::Array::<contract::base::types::PoolDetails>",
-          },
-        ],
-        state_mutability: "view",
-      },
-      {
-        name: "get_closed_pools",
-        type: "function",
-        inputs: [],
-        outputs: [
-          {
-            type: "core::array::Array::<contract::base::types::PoolDetails>",
-          },
-        ],
-        state_mutability: "view",
-      },
-      {
-        name: "receive_random_words",
-        type: "function",
-        inputs: [
-          {
-            name: "requestor_address",
-            type: "core::starknet::contract_address::ContractAddress",
-          },
-          {
-            name: "request_id",
-            type: "core::integer::u64",
-          },
-          {
-            name: "random_words",
-            type: "core::array::Span::<core::felt252>",
-          },
-          {
-            name: "calldata",
-            type: "core::array::Array::<core::felt252>",
-          },
-        ],
-        outputs: [],
-        state_mutability: "external",
-      },
-      {
-        name: "validate_pool",
+        name: "claim",
         type: "function",
         inputs: [
           {
             name: "pool_id",
             type: "core::integer::u32",
-          },
-          {
-            name: "option",
-            type: "core::felt252",
           },
         ],
         outputs: [
@@ -435,22 +517,6 @@ export const abi = [
           },
         ],
         state_mutability: "external",
-      },
-      {
-        name: "get_pools_by_contract_address",
-        type: "function",
-        inputs: [
-          {
-            name: "contract_address",
-            type: "core::starknet::contract_address::ContractAddress",
-          },
-        ],
-        outputs: [
-          {
-            type: "core::array::Array::<contract::base::types::PoolDetails>",
-          },
-        ],
-        state_mutability: "view",
       },
       {
         name: "get_user_wins",
@@ -496,6 +562,97 @@ export const abi = [
         outputs: [
           {
             type: "core::integer::u32",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_all_pools_user_voted",
+        type: "function",
+        inputs: [],
+        outputs: [
+          {
+            type: "core::array::Array::<contract::base::types::PoolDetails>",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_pool_odds",
+        type: "function",
+        inputs: [
+          {
+            name: "pool_id",
+            type: "core::integer::u32",
+          },
+        ],
+        outputs: [
+          {
+            type: "contract::base::types::PoolOdds",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "calculate_potential_payout",
+        type: "function",
+        inputs: [
+          {
+            name: "pool_id",
+            type: "core::integer::u32",
+          },
+          {
+            name: "stake_amount",
+            type: "core::integer::u256",
+          },
+          {
+            name: "option",
+            type: "core::felt252",
+          },
+        ],
+        outputs: [
+          {
+            type: "core::integer::u256",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_share_price",
+        type: "function",
+        inputs: [
+          {
+            name: "pool_id",
+            type: "core::integer::u32",
+          },
+          {
+            name: "option",
+            type: "core::felt252",
+          },
+        ],
+        outputs: [
+          {
+            type: "core::integer::u256",
+          },
+        ],
+        state_mutability: "view",
+      },
+      {
+        name: "get_liquidity_depth",
+        type: "function",
+        inputs: [
+          {
+            name: "pool_id",
+            type: "core::integer::u32",
+          },
+          {
+            name: "price_point",
+            type: "core::integer::u256",
+          },
+        ],
+        outputs: [
+          {
+            type: "(core::integer::u256, core::integer::u256)",
           },
         ],
         state_mutability: "view",

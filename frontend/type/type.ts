@@ -56,3 +56,30 @@ export type sendFnType = {
   poolCreatorFee:number;
   poolCategory:number;
 }; 
+
+export interface poolData {
+  name: string;
+  detail: string;
+  createAt: string;
+  creatorFee: string;
+  isPrivate: boolean;
+  initialPrice: string;
+  maxAmount: string;
+  minAmount: string;
+  option1: string;
+  option2: string;
+  startTime: string;
+  lockTime: string;
+  endTime: string;
+  image: string;
+  id: string;
+  //status: string;
+  //category: string;
+  poolUrl: string;
+  totalBetAmountStrk: string;
+  totalBetCount: string;
+  totalShareOption1: string;
+  totalShareOption2: string;
+  totalStakeOption1: string;
+  totalStakeOption2: string;
+}
