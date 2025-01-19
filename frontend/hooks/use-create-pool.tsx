@@ -16,6 +16,7 @@ export function useCreatePool({
   useEffect(() => {
     if (poolDemoImage !== undefined) {
       const fileContent = poolDemoImage[0]; // Example string
+      if (!fileContent) return
       const blob = new Blob([fileContent], { type: "image/*" }); // Create a Blob from the string
       setImage(URL.createObjectURL(blob));
     }

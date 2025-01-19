@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
       "https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_7/dvHmwiGiA_uE22lKpZKLk4FoGlC_Xzy4",
   },
   images: {
-    domains: ["starknet.id"],
+    domains: ["starknet.id", "images.unsplash.com", "firebasestorage.googleapis.com"],
   },
 };
 
