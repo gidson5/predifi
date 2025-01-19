@@ -38,7 +38,7 @@ async function uploadImage(image: string | FileList | File) {
 }
 
 export const predifiContractAddress =
-  "0x05a940eadbffd7d4c920fa42e857215da7791b63168e49fa34fccb621e802299";
+  "0x02bf0d976b91483635b7ad6d2097a2b09df29a4515f0deda5f1c23e460b881a0";
 
 export const provider = new RpcProvider({
     nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
@@ -60,13 +60,13 @@ export async function sendFn(data:sendFnType) {
         byteArray.byteArrayFromString(poolDetail),
         byteArray.byteArrayFromString(poolImageUrl??""),
         byteArray.byteArrayFromString(poolUrl),
-        cairo.uint256(startDate),
-        cairo.uint256(lockDate),
-        cairo.uint256(endDate),
+        startDate,
+        lockDate,
+        endDate,
         poolOptionA,
         poolOptionB,
-        poolMin,
-        poolMax,
+        cairo.uint256(poolMin),
+        cairo.uint256(poolMax),
         poolCreatorFee,
         0,
         poolCategory,
