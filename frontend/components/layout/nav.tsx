@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useAccount, useDisconnect } from "@starknet-react/core";
+import { useAccount, useDisconnect, useStarkName } from "@starknet-react/core";
 import { addressSlice } from "@/lib/helper";
 import Conectors from "../conectors";
 import { Button } from "../ui/button";
@@ -13,6 +13,10 @@ function Nav() {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect({});
   const user = isConnected ? addressSlice(address ?? "") : "Connect Wallet";
+
+  const { data } = useStarkName({
+    address,
+  });
 
   function modalHandler() {
     setModal((prev) => !prev);
@@ -33,7 +37,7 @@ function Nav() {
             className="bg-transparent shadow-none border border-[#373737] text-white"
             onClick={modalHandler}
           >
-            {user}
+            {data ? data : user}
             <span
               className={`${
                 openModal ? "-rotate-180" : "rotate-0"

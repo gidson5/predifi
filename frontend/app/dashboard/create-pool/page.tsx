@@ -9,7 +9,7 @@ import { useAccount, useReadContract } from "@starknet-react/core";
 import { abi } from "@/lib/abi";
 import { useCreatePool } from "@/hooks/use-create-pool";
 import CreatePoolModal from "./components/create-pool-modal";
-import { prediFiContract, predifiContractAddress, sendFn } from "@/lib/send-fn"
+import { prediFiContract, predifiContractAddress, sendFn } from "@/lib/send-fn";
 import Loading from "@/components/loading-spinner";
 
 function CreatePoolForm() {
@@ -35,7 +35,7 @@ function CreatePoolForm() {
   //const poolshare = watch("privacy");
   const poolCategory = watch("category");
 
-  const { data: allPools,isLoading } = useReadContract({
+  const { data: allPools, isLoading } = useReadContract({
     abi: abi,
     functionName: "get_all_pools",
     address: predifiContractAddress,
@@ -44,7 +44,7 @@ function CreatePoolForm() {
   console.log(allPools);
   const onSubmit: SubmitHandler<creatorInputs> = (data) => {
     console.log(startDate, endDate, lockDate, data);
-    setIsOpen(true)
+    setIsOpen(true);
   };
 
   useCreatePool({
@@ -58,7 +58,7 @@ function CreatePoolForm() {
     setStartDate,
   });
 
-  console.log(poolDemoImage)
+  console.log(poolDemoImage);
   const { account } = useAccount();
   if (account) {
     prediFiContract.connect(account);
@@ -87,8 +87,8 @@ function CreatePoolForm() {
   if (account) {
     prediFiContract.connect(account);
   }
-  console.log(isLoading,"loader")
-  if(isLoading) return <Loading message="fetting pool data"/>
+  console.log(isLoading, "loader");
+  if (isLoading) return <Loading message="fetting pool data" />;
   return (
     <>
       {isOpen && (
@@ -100,7 +100,6 @@ function CreatePoolForm() {
       <section>
         <h2>Create a pool</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-9">
-
           <div className="md:grid sm:grid-cols-3 gap-3 flex flex-col-reverse">
             <div className="flex gap-1 flex-col text-base place-self-end w-full order-1 sm:order-none">
               <label htmlFor="Name">Name</label>
@@ -158,7 +157,6 @@ function CreatePoolForm() {
               id="description"
               className="border-[#373737] bg-inherit border rounded-[8px] h-[140px] w-full px-4 py-1 outline-none"
               placeholder="pool description"
-
               {...register("description", { required: true })}
             />
           </div>
@@ -196,7 +194,6 @@ function CreatePoolForm() {
           </div>
 
           <div className="sm:grid sm:grid-cols-3 gap-3 flex flex-col">
-
             <div className="flex gap-1 flex-col text-base place-self-end w-full">
               <label htmlFor="option-0ne">Option 1</label>
               <input
@@ -241,7 +238,6 @@ function CreatePoolForm() {
             </div>
           </div>
           <div className="sm:grid sm:grid-cols-3 gap-3 flex flex-col">
-
             <div className="flex gap-1 flex-col text-base place-self-end w-full">
               <label htmlFor="min-bet-amount">Min bet amount</label>
               <input
@@ -270,7 +266,6 @@ function CreatePoolForm() {
                 {...register("creatorsFee", { required: true, max: 5 })}
                 placeholder="max is 5"
                 max="5"
-
                 className="border-[#373737] bg-inherit border rounded-[8px] h-[45px] px-4 outline-none"
               />
             </div>
