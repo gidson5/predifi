@@ -1,34 +1,35 @@
-"use client"
+"use client";
 import Image from "next/image";
-import img from "@/public/avatar.png"
+import img from "@/public/avatar.png";
 import Clip from "@/svg/clip";
 import Link from "next/link";
-import { routes } from "@/lib/route";
 import Edit from "@/svg/edit";
 import { addressSlice } from "@/lib/helper";
 import { useAccount } from "@starknet-react/core";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ChevronDown from "@/svg/chevron-down";
-
+import { FilterContext } from "@/context/filter-context-provider";
 
 function ProfileLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-    const {address,isConnected} = useAccount()
-    const [isOpen, setIsOpen] = useState(false);
-    const user = isConnected ? addressSlice(address ?? "") : "Wallet address";
-    const handleCopy = async () => {
-       const url = window.location.href;
-      try {
-        await navigator.clipboard.writeText(url);
-        //toast.success("Copied!");
-      } catch (error) {
-        //toast.error("Failed to copy!, try aagin");
-        console.log(error)
-      }
-    };
+  const { setGetType, getType } = useContext(FilterContext);
+  const { address, isConnected } = useAccount();
+  const [isOpen, setIsOpen] = useState(false);
+  const user = isConnected ? addressSlice(address ?? "") : "Wallet address";
+  const handleCopy = async () => {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      //toast.success("Copied!");
+    } catch (error) {
+      //toast.error("Failed to copy!, try aagin");
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="border-b border-[#373737] py-3">
@@ -78,7 +79,7 @@ function ProfileLayout({
               active pool
             </option>
             <option value="active pool" className="bg-[#373737]">
-              Manage pools
+              my pools
             </option>
             <option value="active pool" className="bg-[#373737]">
               Claiming
@@ -93,14 +94,27 @@ function ProfileLayout({
           </span>
         </div>
         <div className="hidden justify-between items-center gap-3 md:flex ">
-          <div className="bg-[#373737] w-[170px] h-[43px] grid place-content-center align-middle rounded-t-full">
-            <Link href={routes.dashboard}>Active pools</Link>
+          <div
+            className={`bg-[#373737] w-[170px] h-[43px] grid place-content-center align-middle rounded-t-full cursor-pointer${
+              getType === "active" ? "bg-[#FFFFFF75]" : "bg-[#373737]"
+            }`}
+            onClick={() => setGetType("active")}
+          >
+            Active pools
           </div>
           <div className="bg-[#373737] w-[170px] h-[43px] grid place-content-center align-middle rounded-t-full">
-            <Link href={routes.profile}>Manage pools</Link>
+            wins
           </div>
           <div className="bg-[#373737] w-[170px] h-[43px] grid place-content-center align-middle rounded-t-full">
-            <Link href={routes.profile}>Claiming</Link>
+            vote in
+          </div>
+          <div
+            className={`bg-[#373737] w-[170px] h-[43px] grid place-content-center align-middle rounded-t-full cursor-pointer ${
+              getType === "claim" ? "bg-[#FFFFFF75]" : "bg-[#373737]"
+            }`}
+            onClick={() => setGetType("claim")}
+          >
+            Claiming
           </div>
         </div>
         <Link href="#" className="flex gap-3 items-center mb-3">
@@ -112,4 +126,4 @@ function ProfileLayout({
     </>
   );
 }
-export default ProfileLayout
+export default ProfileLayout;

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { sliceWithEllipsis } from "@/lib/helper";
 import { poolData } from "@/type/type";
 function GameCard({ data }:{data:poolData}) {
+  // console.log(data)
   return (
     <div className="border border-[#373737] p-2 sm:p-4 rounded-[8px] flex justify-between items-center gap-3 sm:gap-8 w-[550px] font-work relative">
       <span className="text-[#CCCCCC] border rounded-md p-1 absolute right-4 top-2">
@@ -12,7 +13,7 @@ function GameCard({ data }:{data:poolData}) {
         //placeholder="blur"
         //blurDataURL={data.poolImage}
         className="w-[150px] h-[150px] self-start"
-        src={data.image}
+        src={data?.image}
         alt=""
         width={150}
         height={150}

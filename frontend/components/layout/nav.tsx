@@ -25,12 +25,13 @@ function Nav() {
           <Link href={routes.home} className="text-xl font-normal">
             PrediFi
           </Link>
-          <div className="hidden justify-between items-center gap-4 sm:flex">
-            <h3>Features</h3>
-            <h3>How it works</h3>
-          </div>
+          <ul className="hidden justify-between items-center gap-4 sm:flex capitalize">
+            <li>Features</li>
+            <li>How it works</li>
+            <li>about</li>
+          </ul>
           <Button
-            className="bg-transparent shadow-none border border-[#373737] text-white"
+            className="bg-transparent rounded-full hover:bg-transparent shadow-none border border-[#37B7C3] text-[#37B7C3]"
             onClick={modalHandler}
           >
             {user}
@@ -44,7 +45,7 @@ function Nav() {
           </Button>
           {openModal && (
             <Button
-              className={`fixed top-16 right-20 transition-all duration-500 text-[#FFFFFF] ${
+              className={`fixed top-16 right-20 transition-all duration-500 text-[#37B7C3] border border-[#37B7C3] bg-inherit rounded-full hover:bg-transparent ${
                 isConnected ? "block" : "hidden"
               }`}
               onClick={() => {
