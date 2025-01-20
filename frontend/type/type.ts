@@ -5,9 +5,28 @@ export type modal = {
   setIsOpen: () => void;
 };
 
-export type poolModal ={
-  modalHandle:()=>void;
-  sendFn:()=>void;
+// type data = {
+//   poolName: string;
+//   poolType: string;
+//   poolDetail: number;
+//   image: number;
+//   poolUrl: string;
+//   startDate: Moment | string;
+//   lockDate: string;
+//   endDate: string;
+//   poolOptionA: string;
+//   poolOptionB: string;
+//   account: string;
+//   poolMin: number;
+//   poolMax: number;
+//   poolCreatorFee: string;
+//   poolCategory: number;
+// };
+
+export interface poolModal {
+  modalHandle:()=>void,
+  sendFn:()=>void,
+  data:sendFnType
 }
 
 export interface creatorInputs{
