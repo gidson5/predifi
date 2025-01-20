@@ -37,7 +37,7 @@ pub trait IPredifi<TContractState> {
     fn get_pools_by_category(self: @TContractState, category: Category) -> Array<PoolDetails>;
 
     // User Actions and Queries
-    fn vote_in_pool(ref self: TContractState, pool_id: u32, amount: u256, option: felt252) -> bool;
+    fn vote_in_pool(ref self: TContractState, pool_id: u32, amount: u32, option: felt252) -> bool;
     fn claim(ref self: TContractState, pool_id: u32) -> bool;
     fn get_user_wins(self: @TContractState, user: ContractAddress) -> u32;
     fn get_user_losses(self: @TContractState, user: ContractAddress) -> u32;
@@ -51,6 +51,8 @@ pub trait IPredifi<TContractState> {
     ) -> u256;
     fn get_share_price(self: @TContractState, pool_id: u32, option: felt252) -> u256;
     fn get_liquidity_depth(self: @TContractState, pool_id: u32, price_point: u256) -> (u256, u256);
+
+    fn get_strk_usd_price(self: @TContractState) -> (u128, u32);
 }
 // fn update_pool_result(ref self: TContractState, pool_id: u32, winning_option: felt252);
 // many other get functions, get wins, get losses get total bet, more storage like that, a

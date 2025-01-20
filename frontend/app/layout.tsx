@@ -13,7 +13,7 @@ const Jersey10 = Jersey_10({
   variable: "--font-jersey-10",
 });
 
-const  WorkSans = Work_Sans({
+const WorkSans = Work_Sans({
   variable: "--font-work-sans",
   subsets: ["latin"],
 });
@@ -21,6 +21,7 @@ const  WorkSans = Work_Sans({
 export const metadata: Metadata = {
   title: "PrediFI - Onchain Prediction Protocol",
   description: "Prediction Protocol built on starknet, predict various outcomes across various fields",
+
 };
 
 export default function RootLayout({
@@ -30,6 +31,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {" "}
+        <Script src="https://telegram.org/js/telegram-web-app.js"></Script>
+      </head>
       <body
         className={`${Jersey10.variable} ${WorkSans.variable} antialiased px-5 md:px-10 xl:px-16 text-[#FFFFFF] font-work bg-[#13131A]`}
       >

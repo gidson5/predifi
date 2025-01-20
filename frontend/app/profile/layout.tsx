@@ -37,15 +37,21 @@ function ProfileLayout({
       </div>
       <div className="flex justify-between items-center w-full py-6">
         <div className="flex justify-between items-center w-full">
-          <div className="flex justify-between items-center gap-2 sm:gap-4 md:gap-10 sm:flex-row flex-col ">
-            <div className="w-[50px] h-[50px] sm:w-[60px] sm:h-[60px] md:w-[111px] md:h-[111px] ">
-              <Image className="rounded-full" src={img} alt="user-avatar" />
+          <div className="flex justify-between items-center gap-10">
+            <div className="w-[111px] h-[111px] ">
+              <Image
+                className="rounded-full"
+                src={profile?.profilePicture || img}
+                alt="user-avatar"
+                width={111}
+                height={111}
+              />
             </div>
             <button
               type="button"
               className="flex justify-between items-center border-[#373737] border rounded-full py-2 sm:px-4 gap-2 text-[9px] sm:text-base px-2"
             >
-              <span>{user}</span>
+              <span>{data ? data : user}</span>
               <div onClick={handleCopy}>
                 <Clip />
               </div>

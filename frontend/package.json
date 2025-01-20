@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@argent/tma-wallet": "^1.19.3",
     "@radix-ui/react-dropdown-menu": "^2.1.4",
     "@radix-ui/react-slot": "^1.1.1",
     "@starknet-react/chains": "^3.1.2",
@@ -24,6 +25,7 @@
     "react-hook-form": "^7.54.2",
     "react-spinners": "^0.15.0",
     "starknet": "^6.21.0",
+    "starknetid.js": "^4.0.1",
     "starknetkit": "^2.6.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7"

@@ -21,6 +21,7 @@ const StarknetProvider = ({ children }: { children: ReactNode }) => {
     includeRecommended: "always",
   });
 
+  console.log(process.env.NEXT_PUBLIC_ALCHEMY_API_KEY);
   const rpc = useCallback(() => {
     return {
       nodeUrl: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
@@ -39,7 +40,7 @@ const StarknetProvider = ({ children }: { children: ReactNode }) => {
 
   const connectors = [
     ...injected,
-    new WebWalletConnector({ 
+    new WebWalletConnector({
       url: "https://web.argent.xyz",
     }) as never as Connector,
     ArgentMobile as never as Connector,

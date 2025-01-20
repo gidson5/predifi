@@ -1,4 +1,4 @@
-function  Edit(){
+function Edit() {
   return (
     <svg
       width="20"
@@ -32,4 +32,4 @@ function  Edit(){
   );
 }
 
-export default Edit
+export default Edit;
