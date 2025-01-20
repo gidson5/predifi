@@ -63,8 +63,7 @@ function CreatePoolForm() {
   if (account) {
     prediFiContract.connect(account);
   }
-  async function createPoolFn() {
-    const data = {
+  const data = {
       poolName,
       poolType,
       poolDetail,
@@ -81,6 +80,7 @@ function CreatePoolForm() {
       poolCreatorFee,
       poolCategory,
     };
+  async function createPoolFn() {
     await sendFn(data);
   }
 
@@ -91,10 +91,12 @@ function CreatePoolForm() {
   if (isLoading) return <Loading message="fetting pool data" />;
   return (
     <>
+    {/* <button onClick={()=>sendFn(account)} className="p-4 bg-gray-600">send</button> */}
       {isOpen && (
         <CreatePoolModal
           sendFn={createPoolFn}
           modalHandle={() => setIsOpen(false)}
+          data={data}
         />
       )}
       <section>
@@ -121,9 +123,9 @@ function CreatePoolForm() {
                 <option value={0} className="bg-[#373737]">
                   Win Bet
                 </option>
-                <option value={3} className="bg-[#373737]">
+                {/* <option value={3} className="bg-[#373737]">
                   Parlay Pool
-                </option>
+                </option> */}
               </select>
             </div>
 

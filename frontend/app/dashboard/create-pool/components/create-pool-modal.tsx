@@ -3,7 +3,8 @@ import BackArrow from "@/svg/back-arrow"
 import { poolModal } from "@/type/type";
 import Image from "next/image";
 
-function CreatePoolModal({modalHandle,sendFn}:poolModal){
+function CreatePoolModal({modalHandle,sendFn,data}:poolModal){
+  console.log(data)
     return (
       <div className="relative">
         <div
@@ -23,17 +24,12 @@ function CreatePoolModal({modalHandle,sendFn}:poolModal){
               <Image src="" alt="pool-image" fill />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-work font-semibold">
-                PredFi to win the hackathon
-              </h2>
+              <h2 className="text-xl sm:text-2xl font-work font-semibold"></h2>
               <div className="flex flex-col md:flex-row">
                 <div className="grid gap-5 md:gap-10 md:w-1/2">
                   <div>
-                    <h3>Description</h3>
-                    <h3>
-                      You can now put your prediction into something and get
-                      outcomes
-                    </h3>
+                    <h3>{data.poolName}</h3>
+                    <h3>{data.poolDetail}</h3>
                   </div>
                   <div>
                     <h3>
@@ -49,7 +45,7 @@ function CreatePoolModal({modalHandle,sendFn}:poolModal){
                   <div className="grid self-start gap-5 md:hidden">
                     <div>
                       <h3>Event URL</h3>
-                      <h3>https://earn.superteam.fun/all/</h3>
+                      <h3>{data.poolUrl}</h3>
                     </div>
                     <div>
                       <h3>Total Amount in Pool</h3>
@@ -63,7 +59,9 @@ function CreatePoolModal({modalHandle,sendFn}:poolModal){
                       </Button>
                       <Button className="rounded-full">$10</Button>
                     </div>
-                    <Button onClick={sendFn} className="w-full rounded-full">Commit</Button>
+                    <Button onClick={sendFn} className="w-full rounded-full">
+                      Commit
+                    </Button>
                   </div>
                 </div>
                 <div className="w-1/2 md:grid place-content-end self-start gap-16 hidden ">
