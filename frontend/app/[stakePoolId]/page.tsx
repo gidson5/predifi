@@ -1,8 +1,10 @@
+"use client";
 import Image from "next/image"
 import img from "@/public/Image.png"
 import { Button } from "@/components/ui/button";
-
+import { useParams } from "next/navigation";
 function StakePoolId(){
+  const { stakePoolId } = useParams();
     return (
       <section className="grid gap-4">
         <div className="w-full h-[250px]">
@@ -14,7 +16,7 @@ function StakePoolId(){
         </div>
         <div>
           <h2 className="font-semibold font-work text-2xl">
-            PredFi to win the hackathon
+            PredFi to win the hackathon  Pool ID: {stakePoolId} 
           </h2>
         </div>
         <div className="grid gap-3">

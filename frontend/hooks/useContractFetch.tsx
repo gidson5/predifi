@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useContract, useStarknetCall } from "@starknet-react/core";
+import { useReadContract } from "@starknet-react/core";
 
 interface UseReadContractProps {
   abi: any;
@@ -8,7 +8,7 @@ interface UseReadContractProps {
   args?: any[];
 }
 
-export function useReadContract({
+export function useCustomReadContract({
   abi,
   functionName,
   address: contractAddress,
@@ -18,29 +18,28 @@ export function useReadContract({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
-  const { contract } = useContract({ abi, address: contractAddress });
 
-  const {
-    data: contractData,
-    loading: callLoading,
-    error: callError,
-    refetch,
-  } = useStarknetCall({
-    contract,
-    method: functionName,
+  const { data: contractData, error: callError } = useReadContract({
+    abi: abi,
+    functionName: functionName,
+    address: contractAddress,
     args: args.length > 0 ? args : [],
   });
 
+  // Set the data when the contract data changes
+
+  // add error and refetching also
   useEffect(() => {
-    setIsLoading(callLoading);
-    setIsFetching(callLoading);
-    if (contractData) {
-      setData(contractData);
-    }
     if (callError) {
       setError(callError);
     }
-  }, [contractData, callLoading, callError]);
+  }, [callError]);
+  useEffect(() => {
+    if (contractData) {
+      setData(contractData);
+      setIsLoading(false);
+    }
+  }, [contractData]);
 
-  return { data, isLoading, refetch, isFetching, error };
+  return { data, isLoading, isFetching, error };
 }

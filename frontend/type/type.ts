@@ -76,29 +76,27 @@ export type sendFnType = {
   poolCategory:number;
 }; 
 
-export interface poolData {
-  name: string;
-  detail: string;
-  createAt: string;
+export interface PoolData {
+  poolName: string;
+  poolDescription: string;
+  createdTimeStamp: string;
   creatorFee: string;
   isPrivate: boolean;
-  initialPrice: string;
-  maxAmount: string;
-  minAmount: string;
+  initial_share_price: string;
+  maxBetAmount: string;
+  minBetAmount: string;
   option1: string;
   option2: string;
-  startTime: string;
-  lockTime: string;
-  endTime: string;
-  image: string;
-  id: string;
-  //status: string;
-  //category: string;
-  poolUrl: string;
+  poolStartTime: string;
+  poolLockTime: string;
+  poolEndTime: string;
+  poolImage: string;
+  pool_id: string;
+  poolEventSourceUrl: string;
   totalBetAmountStrk: string;
   totalBetCount: string;
-  totalShareOption1: string;
-  totalShareOption2: string;
+  totalSharesOption1: string;
+  totalSharesOption2: string;
   totalStakeOption1: string;
   totalStakeOption2: string;
 }
