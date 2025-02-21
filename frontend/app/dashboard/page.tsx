@@ -32,8 +32,8 @@ function Dashboard() {
     poolUrl: data.poolEventSourceUrl,
     totalBetAmountStrk: formatAmount(Number(data.totalBetAmountStrk)),
     totalBetCount: formatAmount(Number(data.totalBetCount)),
-    totalShareOption1: formatAmount(Number(data.totalSharesOption1)),
-    totalShareOption2: formatAmount(Number(data.totalSharesOption2)),
+    totalShareOption1: formatAmount(Number(data.totalShareOption1)),
+    totalShareOption2: formatAmount(Number(data.totalShareOption2)),
     totalStakeOption1: formatAmount(Number(data.totalStakeOption1)),
     totalStakeOption2: formatAmount(Number(data.totalStakeOption2)),
   }));

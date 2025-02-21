@@ -95,8 +95,8 @@ export interface PoolData {
   poolEventSourceUrl: string;
   totalBetAmountStrk: string;
   totalBetCount: string;
-  totalSharesOption1: string;
-  totalSharesOption2: string;
+  totalShareOption1: string;
+  totalShareOption2: string;
   totalStakeOption1: string;
   totalStakeOption2: string;
 }
