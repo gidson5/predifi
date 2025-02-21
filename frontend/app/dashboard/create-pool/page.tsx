@@ -5,7 +5,8 @@ import { useState } from "react";
 import Image from "next/image";
 import { creatorInputs } from "@/type/type";
 import { DateInput } from "./components/inputs";
-import { useAccount, useReadContract } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
+import { useCustomReadContract } from "@/hooks/useContractFetch";
 import { abi } from "@/lib/abi";
 import { useCreatePool } from "@/hooks/use-create-pool";
 import CreatePoolModal from "./components/create-pool-modal";
@@ -35,7 +36,7 @@ function CreatePoolForm() {
   //const poolshare = watch("privacy");
   const poolCategory = watch("category");
 
-  const { data: allPools, isLoading } = useReadContract({
+  const { data: allPools, isLoading } = useCustomReadContract({
     abi: abi,
     functionName: "get_all_pools",
     address: predifiContractAddress,

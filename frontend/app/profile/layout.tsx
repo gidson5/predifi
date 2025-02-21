@@ -9,7 +9,6 @@ import { useAccount } from "@starknet-react/core";
 import { useContext, useState } from "react";
 import ChevronDown from "@/svg/chevron-down";
 import { FilterContext } from "@/context/filter-context-provider";
-
 function ProfileLayout({
   children,
 }: Readonly<{
@@ -41,7 +40,7 @@ function ProfileLayout({
             <div className="w-[111px] h-[111px] ">
               <Image
                 className="rounded-full"
-                src={profile?.profilePicture || img}
+                src={img}
                 alt="user-avatar"
                 width={111}
                 height={111}
@@ -51,7 +50,7 @@ function ProfileLayout({
               type="button"
               className="flex justify-between items-center border-[#373737] border rounded-full py-2 sm:px-4 gap-2 text-[9px] sm:text-base px-2"
             >
-              <span>{data ? data : user}</span>
+              <span>{user}</span>
               <div onClick={handleCopy}>
                 <Clip />
               </div>
