@@ -5,8 +5,6 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{secrets.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID}}
 
     steps:
       - name: Checkout repository
@@ -16,6 +14,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20"
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
