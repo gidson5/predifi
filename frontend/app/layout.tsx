@@ -6,6 +6,7 @@ import Nav from "@/components/layout/nav";
 import StarknetProvider from "@/components/starknet-provider";
 import FilterContextProvider from "@/context/filter-context-provider";
 import AllFilterContextProvider from "@/context/all-contex-provider";
+import Script from "next/script";
 
 const Jersey10 = Jersey_10({
   subsets: ["latin"],

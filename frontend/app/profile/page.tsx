@@ -4,7 +4,7 @@ import GameCard from "../../components/game-card";
 import { abi } from "@/lib/abi";
 import { felt252ToString, formatAmount } from "@/lib/helper";
 import { predifiContractAddress } from "@/lib/send-fn";
-import { useReadContract } from "@starknet-react/core";
+import { useReadContract } from "@/hooks/useContractFetch";
 //import CircleAlert from "@/svg/circle-alert";
 
 function Profile() {

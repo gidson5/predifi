@@ -9,7 +9,6 @@ import { useAccount } from "@starknet-react/core";
 import { useContext, useState } from "react";
 import ChevronDown from "@/svg/chevron-down";
 import { FilterContext } from "@/context/filter-context-provider";
-
 function ProfileLayout({
   children,
 }: Readonly<{

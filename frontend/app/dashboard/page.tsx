@@ -1,5 +1,5 @@
 "use client"
-import { useReadContract } from "@starknet-react/core";
+import { useReadContract } from "@/hooks/useContractFetch";
 import GameCard from "../../components/game-card";
 import { abi } from "@/lib/abi";
 import { predifiContractAddress } from "@/lib/send-fn";
