@@ -6,9 +6,9 @@ pub mod Predifi {
     use starknet::get_block_timestamp;
     use core::starknet::storage::{
         Map, StoragePathEntry, StoragePointerReadAccess, StoragePointerWriteAccess,
-            };
+    };
 
-   
+
     #[storage]
     struct Storage {
         pools: Map<u256, PoolDetails>,
@@ -16,8 +16,7 @@ pub mod Predifi {
     }
 
     #[constructor]
-    fn constructor( ref self: ContractState) {
-    }
+    fn constructor(ref self: ContractState) {}
 
 
     #[abi(embed_v0)]
@@ -42,14 +41,15 @@ pub mod Predifi {
         ) -> bool {
             let pool_id = self.pool_count.read() + 1;
             self.pool_count.write(pool_id);
-    
+
             // Validation checks
             assert!(poolStartTime < poolLockTime, "Start time must be before lock time");
             assert!(poolLockTime < poolEndTime, "Lock time must be before end time");
             assert!(minBetAmount > 0, "Minimum bet must be greater than 0");
-            assert!(maxBetAmount >= minBetAmount, "Max bet must be greater than or equal to min bet");
-            
-    
+            assert!(
+                maxBetAmount >= minBetAmount, "Max bet must be greater than or equal to min bet",
+            );
+
             let new_pool = PoolDetails {
                 pool_id,
                 address: get_caller_address(),
@@ -78,15 +78,12 @@ pub mod Predifi {
                 totalSharesOption2: 0,
                 initial_share_price: 100,
             };
-            
+
             self.pools.entry(pool_id).write(new_pool);
             true
         }
-        
     }
 
     #[generate_trait]
-    impl Private of PrivateTrait {
-        
-    }
+    impl Private of PrivateTrait {}
 }

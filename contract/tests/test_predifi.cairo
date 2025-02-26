@@ -12,22 +12,22 @@ use contract::interfaces::ipredifi::{IPredifiDispatcher, IPredifiDispatcherTrait
 fn owner() -> ContractAddress {
     'owner'.try_into().unwrap()
 }
-fn deploy_predifi() -> IPredifiDispatcher{
+fn deploy_predifi() -> IPredifiDispatcher {
     let contract_class = declare("Predifi").unwrap().contract_class();
 
     let mut calldata = array![];
     owner().serialize(ref calldata);
 
     let (contract_address, _) = contract_class.deploy(@calldata).unwrap();
-    IPredifiDispatcher{contract_address}
-
+    IPredifiDispatcher { contract_address }
 }
 
 
 #[test]
-    fn test_create_pool() {
-        let contract = deploy_predifi();
-        let result = contract.create_pool(
+fn test_create_pool() {
+    let contract = deploy_predifi();
+    let result = contract
+        .create_pool(
             'Example Pool',
             Pool::WinBet,
             "A simple betting pool",
@@ -45,9 +45,8 @@ fn deploy_predifi() -> IPredifiDispatcher{
             Category::Sports,
         );
 
-        assert!(result == true, "not created");
-    }
-
+    assert!(result == true, "not created");
+}
 // // Add the mock contract at the top of your test file
 // #[starknet::interface]
 // trait IRandomness<TContractState> {
@@ -124,7 +123,8 @@ fn deploy_predifi() -> IPredifiDispatcher{
 //     }
 // }
 
-// fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -> ContractAddress {
+// fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -> ContractAddress
+// {
 //     let contract = declare(contract_name).unwrap().contract_class();
 //     let (contract_address, _) = contract.deploy(@constructor_calldata).unwrap();
 //     contract_address
@@ -221,3 +221,4 @@ fn deploy_predifi() -> IPredifiDispatcher{
 // // assert_eq!(pool.status, Status::Active, "Pool status mismatch");
 // // assert_eq!(pool.category, 'Sports', "Category mismatch");
 // }
+

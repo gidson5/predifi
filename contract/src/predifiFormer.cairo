@@ -9,7 +9,8 @@
 //         },
 //         errors::Errors,
 //     };
-//     use starknet::{ContractAddress, get_caller_address, get_contract_address, get_block_timestamp};
+//     use starknet::{ContractAddress, get_caller_address, get_contract_address,
+//     get_block_timestamp};
 //     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
 //     use core::traits::Into;
 //     use openzeppelin::access::ownable::OwnableComponent;
@@ -48,7 +49,7 @@
 //         pools_len: u32,
 //         strk_token: ContractAddress,
 //         predifi_token_address: ContractAddress,
-//         pending_pools: Map<u32, bool>, // Track pools waiting for IDs   
+//         pending_pools: Map<u32, bool>, // Track pools waiting for IDs
 //         user_wins: Map<ContractAddress, u32>,
 //         user_losses: Map<ContractAddress, u32>,
 //         user_total_bets: Map<ContractAddress, u32>,
@@ -171,13 +172,13 @@
 //             self.pools_mapping.read(pool_id)
 //         }
 
-
 //         fn vote_in_pool(
 //             ref self: ContractState, pool_id: u32, amount: u32, option: felt252,
 //         ) -> bool {
 //             // assert(self.assert_vote_values(pool_id, amount, option),
 //             // Errors::INVALID_VOTE_DETAILS);
-//             assert(self.transfer_amount_from_user(1000, get_caller_address()), 'Transfer failed');
+//             assert(self.transfer_amount_from_user(1000, get_caller_address()), 'Transfer
+//             failed');
 //             // assert(!self.is_ended(pool_id), Errors::LOCKED_PREDICTION_POOL);
 
 //             // let mut pool = self.pools_mapping.read(pool_id);
@@ -303,7 +304,8 @@
 //             };
 //             pool_array
 //         }
-//         fn get_pools_by_category(self: @ContractState, category: Category) -> Array<PoolDetails> {
+//         fn get_pools_by_category(self: @ContractState, category: Category) -> Array<PoolDetails>
+//         {
 //             let mut pool_array = array![];
 //             let pool_len = self.pools_len.read();
 //             let mut i: u32 = 1;
@@ -348,8 +350,8 @@
 //             pool_array
 //         }
 
-
-//         fn validate_pool(ref self: ContractState, pool_id: u32, option: ValidateOptions) -> bool {
+//         fn validate_pool(ref self: ContractState, pool_id: u32, option: ValidateOptions) -> bool
+//         {
 //             let pool = self.pools_mapping.read(pool_id);
 //             assert(pool.status == Status::Active, 'Pool is not active');
 //             // let predifi_token = IERC20Dispatcher {

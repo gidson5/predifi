@@ -52,7 +52,8 @@
 // //     println!("The strk/usd price is {} with {} decimals", strk_usd_price, decimals);
 // // }
 
-// fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -> ContractAddress {
+// fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -> ContractAddress
+// {
 //     let contract = declare(contract_name).unwrap().contract_class();
 //     let (contract_address, _) = contract.deploy(@constructor_calldata).unwrap();
 //     contract_address
@@ -144,7 +145,6 @@
 //     assert(pool_details.isPrivate == false, 'Is private mismatch');
 //     assert(pool_details.category == Category::Sports, 'Category mismatch');
 // }
-
 
 // #[test]
 // fn get_all_pools_successfully() {

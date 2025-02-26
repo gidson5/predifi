@@ -22,37 +22,37 @@ pub trait IPredifi<TContractState> {
         isPrivate: bool,
         category: Category,
     ) -> bool;
-    fn validate_pool(ref self: TContractState, pool_id: u32, option: ValidateOptions) -> bool;
-    fn upgrade(ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash);
+    // fn validate_pool(ref self: TContractState, pool_id: u32, option: ValidateOptions) -> bool;
+    // fn upgrade(ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash);
 
-    // Pool Queries
-    fn get_all_pools(self: @TContractState) -> Array<PoolDetails>;
-    fn get_active_pools(self: @TContractState) -> Array<PoolDetails>;
-    fn get_locked_pools(self: @TContractState) -> Array<PoolDetails>;
-    fn get_closed_pools(self: @TContractState) -> Array<PoolDetails>;
-    fn get_pool_by_id(self: @TContractState, pool_id: u32) -> PoolDetails;
-    fn get_pools_by_contract_address(
-        self: @TContractState, contract_address: ContractAddress,
-    ) -> Array<PoolDetails>;
-    fn get_pools_by_category(self: @TContractState, category: Category) -> Array<PoolDetails>;
+    // // Pool Queries
+    // fn get_all_pools(self: @TContractState) -> Array<PoolDetails>;
+    // fn get_active_pools(self: @TContractState) -> Array<PoolDetails>;
+    // fn get_locked_pools(self: @TContractState) -> Array<PoolDetails>;
+    // fn get_closed_pools(self: @TContractState) -> Array<PoolDetails>;
+    // fn get_pool_by_id(self: @TContractState, pool_id: u32) -> PoolDetails;
+    // fn get_pools_by_contract_address(
+    //     self: @TContractState, contract_address: ContractAddress,
+    // ) -> Array<PoolDetails>;
+    // fn get_pools_by_category(self: @TContractState, category: Category) -> Array<PoolDetails>;
 
-    // User Actions and Queries
-    fn vote_in_pool(ref self: TContractState, pool_id: u32, amount: u32, option: felt252) -> bool;
-    fn claim(ref self: TContractState, pool_id: u32) -> bool;
-    fn get_user_wins(self: @TContractState, user: ContractAddress) -> u32;
-    fn get_user_losses(self: @TContractState, user: ContractAddress) -> u32;
-    fn get_user_total_bets(self: @TContractState, user: ContractAddress) -> u32;
-    fn get_all_pools_user_voted(self: @TContractState) -> Array<PoolDetails>;
+    // // User Actions and Queries
+    // fn vote_in_pool(ref self: TContractState, pool_id: u32, amount: u32, option: felt252) -> bool;
+    // fn claim(ref self: TContractState, pool_id: u32) -> bool;
+    // fn get_user_wins(self: @TContractState, user: ContractAddress) -> u32;
+    // fn get_user_losses(self: @TContractState, user: ContractAddress) -> u32;
+    // fn get_user_total_bets(self: @TContractState, user: ContractAddress) -> u32;
+    // fn get_all_pools_user_voted(self: @TContractState) -> Array<PoolDetails>;
 
-    // Pool Economics and Calculations
-    fn get_pool_odds(self: @TContractState, pool_id: u32) -> PoolOdds;
-    fn calculate_potential_payout(
-        self: @TContractState, pool_id: u32, stake_amount: u256, option: felt252,
-    ) -> u256;
-    fn get_share_price(self: @TContractState, pool_id: u32, option: felt252) -> u256;
-    fn get_liquidity_depth(self: @TContractState, pool_id: u32, price_point: u256) -> (u256, u256);
+    // // Pool Economics and Calculations
+    // fn get_pool_odds(self: @TContractState, pool_id: u32) -> PoolOdds;
+    // fn calculate_potential_payout(
+    //     self: @TContractState, pool_id: u32, stake_amount: u256, option: felt252,
+    // ) -> u256;
+    // fn get_share_price(self: @TContractState, pool_id: u32, option: felt252) -> u256;
+    // fn get_liquidity_depth(self: @TContractState, pool_id: u32, price_point: u256) -> (u256, u256);
 
-    fn get_strk_usd_price(self: @TContractState) -> (u128, u32);
+    // fn get_strk_usd_price(self: @TContractState) -> (u128, u32);
 }
 // fn update_pool_result(ref self: TContractState, pool_id: u32, winning_option: felt252);
 // many other get functions, get wins, get losses get total bet, more storage like that, a
