@@ -84,6 +84,7 @@ pub mod Predifi {
         }
     }
 
+
     #[generate_trait]
     impl Private of PrivateTrait {}
 }
