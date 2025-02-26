@@ -83,7 +83,8 @@
 //     }
 // }
 
-// fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -> ContractAddress {
+// fn deploy_util(contract_name: ByteArray, constructor_calldata: Array<felt252>) -> ContractAddress
+// {
 //     let contract = declare(contract_name).unwrap().contract_class();
 //     let (contract_address, _) = contract.deploy(@constructor_calldata).unwrap();
 //     contract_address
