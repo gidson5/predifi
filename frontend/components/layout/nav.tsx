@@ -24,10 +24,10 @@ function Nav() {
   return (
     <>
       {openModal && !isConnected && <Conectors setIsOpen={modalHandler} />}
-      <div className="relative mt-6">
-        <nav className="flex justify-between items-center  mt-4">
+      <div className="relative py-6 px-5 md:px-10 xl:px-[100px]">
+        <nav className="flex justify-between items-center">
           <Link href={routes.home} className="text-xl font-normal">
-            PrediFi
+            <img src={"/logo.svg"} alt="logo" />
           </Link>
           <ul className="hidden justify-between items-center gap-4 sm:flex capitalize">
             <li>Features</li>
@@ -35,7 +35,7 @@ function Nav() {
             <li>about</li>
           </ul>
           <Button
-            className="bg-transparent rounded-full hover:bg-transparent shadow-none border border-[#37B7C3] text-[#37B7C3]"
+            className="bg-transparent rounded-full hover:bg-transparent shadow-none border border-white text-white"
             onClick={modalHandler}
           >
             {data ? data : user}
