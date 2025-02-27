@@ -1,12 +1,9 @@
 "use client"
-import img1 from "@/public/Frame 91.svg"
-import Image from "next/image";
 import PredictionType from "@/components/predicton-type-detail";
 import HowITWork from "@/components/how-it-work";
 import PoolTypes from "@/components/pool-types";
 import Link from "next/link";
 import { routes } from "@/lib/route";
-import Nav from "@/components/layout/nav";
 //import bgImg from "@/public/code.png"
 
 export default function Home() {
