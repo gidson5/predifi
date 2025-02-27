@@ -38,13 +38,13 @@ export default function RootLayout({
         <Script src="https://telegram.org/js/telegram-web-app.js"></Script>
       </head>
       <body
-        className={`${Jersey10.variable} ${WorkSans.variable} antialiased px-5 md:px-10 xl:px-16 text-[#FFFFFF] font-work bg-[#13131A]`}
+        className={`${Jersey10.variable} ${WorkSans.variable} antialiased text-[#FFFFFF] font-work bg-[#100e16]`}
       >
         <StarknetProvider>
           <Nav />
           <AllFilterContextProvider>
             <FilterContextProvider>
-              <section className="max-w-screen-[1500px] mx-auto mt-14 min-h-screen pb-14">
+              <section className="max-w-screen-[1500px] mx-auto min-h-screen pb-14">
                 {children}
               </section>
             </FilterContextProvider>
