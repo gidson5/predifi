@@ -1,5 +1,5 @@
-"use client"
-import img1 from "@/public/Frame 91.svg"
+"use client";
+import img1 from "@/public/Frame 91.svg";
 import Image from "next/image";
 import PredictionType from "@/components/predicton-type-detail";
 import HowITWork from "@/components/how-it-work";
@@ -20,12 +20,18 @@ export default function Home() {
           sports, finance, and pop culture.
         </p>
         <div className="flex gap-x-2">
-          <Link href={routes.createPool} className="bg-transparent rounded-full hover:bg-[#37B7C3] shadow-none border border-[#37B7C3] text-[#37B7C3] hover:text-[#071952] py-1 px-4">
+          <Link
+            href={routes.createPool}
+            className="bg-transparent rounded-full hover:bg-[#37B7C3] shadow-none border border-[#37B7C3] text-[#37B7C3] hover:text-[#071952] py-1 px-4"
+          >
             Create a Pool
           </Link>
-          <Link href={routes.dashboard} className="bg-transparent rounded-full hover:bg-[#37B7C3] shadow-none border border-[#37B7C3] text-[#37B7C3] hover:text-[#071952] px-4 py-1">
+          <Link
+            href={routes.dashboard}
+            className="bg-transparent rounded-full hover:bg-[#37B7C3] shadow-none border border-[#37B7C3] text-[#37B7C3] hover:text-[#071952] px-4 py-1"
+          >
             Explore Markets
-          </Link >
+          </Link>
         </div>
       </header>
       <Image src={img1} alt="rectangle" className="my-24 max-w-screen-lg" />
@@ -57,7 +63,9 @@ export default function Home() {
         </div>
       </section>
       <section className="grid gap-3 my-10">
-        <h2 className="text-3xl font-normal font-jersey text-center">Site Metrics</h2>
+        <h2 className="text-3xl font-normal font-jersey text-center">
+          Site Metrics
+        </h2>
         <div className="flex justify-center gap-4">
           <div className="border-[#373737] w-[205px] h-[119px] border text-center grid place-content-center">
             <h2 className="text-sm font-semibold">Total Bets Open</h2>
