@@ -26,7 +26,7 @@ export default function Home() {
           </Link >
         </div>
       </header>
-      <section className="px-5 md:px-10 xl:px-16 my-[3em] lg:my-[6em]">
+      <section className="px-2 md:px-10 xl:px-16 my-[3em] lg:my-[6em]">
         <div className="text-center grid gap-1">
           <h2 className="text-[#37B7C3]">Features overview</h2>
           <h1 className="font-jersey text-3xl">Why Choose PredFi?</h1>
@@ -35,7 +35,7 @@ export default function Home() {
           <PredictionType />
         </div>
       </section>
-      <section className="px-5 md:px-10 xl:px-[100px] bg-[#00020F] py-[3em] lg:py-[6em]">
+      <section className="px-2 md:px-10 xl:px-[100px] bg-[#00020F] py-[3em] lg:py-[6em]">
         <div className="text-center grid gap-1">
           <h2 className="text-[#37B7C3]">Step-by-step</h2>
           <h1 className="font-jersey text-3xl">How It Works</h1>
