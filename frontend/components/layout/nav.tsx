@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import ChevronDown from "@/svg/chevron-down";
 import Link from "next/link";
 import { routes } from "@/lib/route";
+import Image from "next/image";
 
 function Nav() {
   const [openModal, setModal] = useState(false);
@@ -27,7 +28,7 @@ function Nav() {
       <div className="relative py-6 px-5 md:px-10 xl:px-[100px]">
         <nav className="flex justify-between items-center">
           <Link href={routes.home} className="text-xl font-normal">
-            <img src={"/logo.svg"} alt="logo" />
+            <Image height={100} width={100} src={"/logo.svg"} alt="logo" />
           </Link>
           <ul className="hidden justify-between items-center gap-4 sm:flex capitalize">
             <li>Features</li>

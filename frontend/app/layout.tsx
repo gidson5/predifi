@@ -7,6 +7,7 @@ import StarknetProvider from "@/components/starknet-provider";
 import FilterContextProvider from "@/context/filter-context-provider";
 import AllFilterContextProvider from "@/context/all-contex-provider";
 import Script from "next/script";
+import { Toaster } from "@/components/ui/sonner";
 
 const Jersey10 = Jersey_10({
   subsets: ["latin"],
@@ -21,8 +22,8 @@ const WorkSans = Work_Sans({
 
 export const metadata: Metadata = {
   title: "PrediFI - Onchain Prediction Protocol",
-  description: "Prediction Protocol built on starknet, predict various outcomes across various fields",
-
+  description:
+    "Prediction Protocol built on starknet, predict various outcomes across various fields",
 };
 
 export default function RootLayout({
@@ -49,6 +50,17 @@ export default function RootLayout({
             </FilterContextProvider>
           </AllFilterContextProvider>
           <Footer />
+          <Toaster
+            toastOptions={{
+              unstyled: true,
+              classNames: {
+                error: "toaster toast-error",
+                success: "toaster toast-success",
+                warning: "toaster toast-warning",
+                info: "toaster toast-info",
+              },
+            }}
+          />
         </StarknetProvider>
       </body>
     </html>

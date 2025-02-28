@@ -23,7 +23,7 @@ export default function Home() {
           </Link>
           <Link href={routes.dashboard} className="bg-transparent rounded-full transition-all duration-200 hover:bg-[#37B7C3] hover:border-[#37B7C3] shadow-none border border-[#fff] text-[#fff] hover:text-[#071952] px-4 py-1">
             Explore Markets
-          </Link >
+          </Link>
         </div>
       </header>
       <section className="px-2 md:px-10 xl:px-16 my-[3em] lg:my-[6em]">
