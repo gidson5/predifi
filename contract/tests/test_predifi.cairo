@@ -17,12 +17,8 @@ fn deploy_predifi() -> IPredifiDispatcher {
 
     let mut calldata = array![];
     owner().serialize(ref calldata);
-
-  
-  
-
     let (contract_address, _) = contract_class.deploy(@calldata).unwrap();
-    ( IPredifiDispatcher { contract_address })
+    (IPredifiDispatcher { contract_address })
 }
 
 
