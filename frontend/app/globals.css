@@ -91,3 +91,27 @@ input[type="number"] {
 .header-bg {
   background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url("../public/code.png");
 }
+.toaster {
+  background-color: white;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-radius: 5px;
+  gap: 10px;
+  color: white;
+  width: 280px;
+}
+.toast-error {
+  background-color: red;
+}
+.toast-success {
+  background-color: #4ade80;
+}
+
+.toast-warning {
+  background-color: #facc15;
+}
+
+.toast-info {
+  background-color: blue;
+}

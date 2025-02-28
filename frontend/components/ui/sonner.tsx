@@ -1,9 +1,23 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { Toaster as Sonner, toast, ToastOptions } from "sonner";
+import { Toaster as Sonner, toast, ToastClassnames } from "sonner";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
+
+type ToastOptions = {
+  className?: string;
+  closeButton?: boolean;
+  descriptionClassName?: string;
+  style?: React.CSSProperties;
+  cancelButtonStyle?: React.CSSProperties;
+  actionButtonStyle?: React.CSSProperties;
+  duration?: number;
+  unstyled?: boolean;
+  classNames?: ToastClassnames;
+  closeButtonAriaLabel?: string;
+};
+
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
