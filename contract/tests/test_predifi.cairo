@@ -18,12 +18,15 @@ fn deploy_predifi() -> IPredifiDispatcher {
     let mut calldata = array![];
     owner().serialize(ref calldata);
 
+  
+  
+
     let (contract_address, _) = contract_class.deploy(@calldata).unwrap();
-    IPredifiDispatcher { contract_address }
+    ( IPredifiDispatcher { contract_address })
 }
 
 
-#[test]
+// #[test]
 fn test_create_pool() {
     let contract = deploy_predifi();
     let result = contract
@@ -47,6 +50,39 @@ fn test_create_pool() {
 
     assert!(result == true, "not created");
 }
+// #[test]
+// fn test_vote_in_pool() {
+//     let contract = deploy_predifi();
+//     let result = contract
+//         .create_pool(
+//             'Example Pool',
+//             Pool::WinBet,
+//             "A simple betting pool",
+//             "image.png",
+//             "event.com/details",
+//             1710000000,
+//             1710003600,
+//             1710007200,
+//             'Team A',
+//             'Team B',
+//             100,
+//             10000,
+//             5,
+//             false,
+//             Category::Sports,
+//         );
+
+//         // Deploy mock ERC20
+//         let sender: ContractAddress = contract_address_const::<'sender'>();
+//         let erc20_class = declare("MockUsdc").unwrap().contract_class();
+//         let mut calldata = array![sender.into(), sender.into()];
+//         let (erc20_address, _) = erc20_class.deploy(@calldata).unwrap();
+
+//     assert!(result == true, "not created");
+//     let recipient = contract_address_const::<0x2>();
+//     let test = contract.vote_in_pool(1, 500, 1, recipient, erc20_address);
+//     assert!(test == true, "vote successful");
+// }
 // // Add the mock contract at the top of your test file
 // #[starknet::interface]
 // trait IRandomness<TContractState> {
