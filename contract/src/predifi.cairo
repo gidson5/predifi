@@ -191,6 +191,27 @@ pub mod Predifi {
 
             50
         }
+
+
+        fn get_all_pools(self: @ContractState) -> Array<PoolDetails> {
+            let mut pool_array = array![];
+            let pool_count = self.pool_count.read();
+            let mut i: u256 = 1;
+
+            loop {
+                if i > pool_count {
+                    break;
+                }
+
+                // Leer el pool usando el método entry().read()
+                let pool = self.pools.entry(i).read();
+                pool_array.append(pool);
+
+                i += 1;
+            };
+
+            pool_array
+        }
     }
 
     #[generate_trait]
