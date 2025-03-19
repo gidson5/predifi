@@ -21,7 +21,5 @@ pub trait IPredifi<TContractState> {
         isPrivate: bool,
         category: Category,
     ) -> bool;
-   
 }
-
 

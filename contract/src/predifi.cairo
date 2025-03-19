@@ -1,14 +1,11 @@
 #[starknet::contract]
 pub mod Predifi {
-
-    // Cairo imports 
+    // Cairo imports
     use starknet::{ContractAddress, get_block_timestamp, get_caller_address};
-    use starknet::storage::{
-        Map, StorageMapReadAccess, StorageMapWriteAccess
-    };
+    use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     // oz imports
 
-    // package imports 
+    // package imports
     use crate::base::types::{PoolDetails, Pool, Category, Status, UserStake};
     use crate::interfaces::ipredifi::IPredifi;
 
@@ -30,9 +27,9 @@ pub mod Predifi {
             ref self: ContractState,
             poolName: felt252,
             poolType: Pool,
-            poolDescription: ByteArray, 
+            poolDescription: ByteArray,
             poolImage: ByteArray,
-            poolEventSourceUrl: ByteArray, 
+            poolEventSourceUrl: ByteArray,
             poolStartTime: u64,
             poolLockTime: u64,
             poolEndTime: u64,
@@ -52,13 +49,10 @@ pub mod Predifi {
                 maxBetAmount >= minBetAmount, "Max bet must be greater than or equal to min bet",
             );
 
-           
             true
         }
     }
 
     #[generate_trait]
-    impl Private of PrivateTrait {
-
-    }
+    impl Private of PrivateTrait {}
 }

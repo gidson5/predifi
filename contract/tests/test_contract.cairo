@@ -1,4 +1,3 @@
-
 use starknet::{ContractAddress, contract_address_const, ClassHash};
 
 use snforge_std::{declare, ContractClassTrait, DeclareResultTrait};
