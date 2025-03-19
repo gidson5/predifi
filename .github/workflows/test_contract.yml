@@ -1,7 +1,6 @@
-name: Build
+name: Test
 
 on: [push, pull_request]
-
 permissions: read-all
 
 jobs:
@@ -10,7 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: software-mansion/setup-scarb@v1
-      - name: Check cairo format
-        run: scarb fmt --check
-      - name: Build cairo programs
-        run: scarb build
+      - uses: foundry-rs/setup-snfoundry@v3
+        with:
+          starknet-foundry-version: 0.31.0
+      - name: Run cairo tests
+        run: snforge test
