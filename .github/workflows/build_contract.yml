@@ -7,11 +7,11 @@ permissions: read-all
 jobs:
   check:
     runs-on: ubuntu-latest
-    working-directory: contract
     steps:
       - uses: actions/checkout@v3
       - uses: software-mansion/setup-scarb@v1
       - name: Check cairo format
+        working-directory: contract
         run: scarb fmt --check
       - name: Build cairo programs
         working-directory: contract

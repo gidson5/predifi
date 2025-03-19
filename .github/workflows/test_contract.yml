@@ -6,7 +6,6 @@ permissions: read-all
 jobs:
   check:
     runs-on: ubuntu-latest
-    working-directory: contract
     steps:
       - uses: actions/checkout@v3
       - uses: software-mansion/setup-scarb@v1
@@ -14,4 +13,5 @@ jobs:
         with:
           starknet-foundry-version: 0.31.0
       - name: Run cairo tests
+        working-directory: contract
         run: snforge test
