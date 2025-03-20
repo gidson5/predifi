@@ -1,4 +1,4 @@
-use crate::base::types::{Pool, Category};
+use crate::base::types::{PoolOdds, Pool, Category};
 
 #[starknet::interface]
 pub trait IPredifi<TContractState> {
@@ -20,6 +20,9 @@ pub trait IPredifi<TContractState> {
         creatorFee: u8,
         isPrivate: bool,
         category: Category,
-    ) -> bool;
+    ) -> u256;
+
+    fn pool_count(self: @TContractState) -> u256;
+    fn pool_odds(self: @TContractState, pool_id: u256) -> PoolOdds;
 }
 
