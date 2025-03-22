@@ -24,7 +24,6 @@ pub struct UserStake {
     pub shares: u256,
     pub option: bool,
     pub timestamp: u64,
-
 }
 
 #[derive(Drop, Serde, PartialEq, starknet::Store, Clone)]

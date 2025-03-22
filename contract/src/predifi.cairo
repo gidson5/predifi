@@ -7,7 +7,7 @@ pub mod Predifi {
     };
     use starknet::{ContractAddress, get_block_timestamp, get_caller_address};
     use crate::base::errors::Errors::{
-        AMOUNT_ABOVE_MAXIMUM, AMOUNT_BELOW_MINIMUM, INACTIVE_POOL, INVALID_POOL_OPTION
+        AMOUNT_ABOVE_MAXIMUM, AMOUNT_BELOW_MINIMUM, INACTIVE_POOL, INVALID_POOL_OPTION,
     };
     // oz imports
 
@@ -167,7 +167,6 @@ pub mod Predifi {
             pool.totalBetAmountStrk += amount;
             pool.totalBetCount += 1;
 
-
             // Update pool odds
             let odds = calculate_odds(pool.totalStakeOption1, pool.totalStakeOption2);
             self.pool_odds.write(pool_id, odds);
@@ -177,7 +176,11 @@ pub mod Predifi {
             );
             // Store user stake
             let user_stake = UserStake {
-                pool_id, option: option == option2, amount, shares, timestamp: get_block_timestamp(),
+                pool_id,
+                option: option == option2,
+                amount,
+                shares,
+                timestamp: get_block_timestamp(),
             };
             let address = get_caller_address();
             self.user_stakes.write((pool_id, address), user_stake);

@@ -25,15 +25,8 @@ pub trait IPredifi<TContractState> {
     fn pool_count(self: @TContractState) -> u256;
     fn pool_odds(self: @TContractState, pool_id: u256) -> PoolOdds;
     fn get_pool(self: @TContractState, pool_id: u256) -> PoolDetails;
-    fn vote(
-        ref self: TContractState,
-        pool_id: u256,
-        option: felt252,
-        amount: u256,
-    );
+    fn vote(ref self: TContractState, pool_id: u256, option: felt252, amount: u256);
 
-    fn get_user_stake(
-        self: @TContractState, pool_id: u256, address: ContractAddress,
-    ) -> UserStake;
+    fn get_user_stake(self: @TContractState, pool_id: u256, address: ContractAddress) -> UserStake;
 }
 
