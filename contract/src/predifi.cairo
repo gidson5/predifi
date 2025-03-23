@@ -10,6 +10,8 @@ pub mod Predifi {
         AMOUNT_ABOVE_MAXIMUM, AMOUNT_BELOW_MINIMUM, INACTIVE_POOL, INVALID_POOL_OPTION,
     };
     // oz imports
+    use openzeppelin_access::accesscontrol::AccessControlComponent;
+    use openzeppelin_introspection::src5::SRC5Component;
 
     // package imports
     use crate::base::types::{Category, Pool, PoolDetails, PoolOdds, Status, UserStake};
@@ -18,6 +20,26 @@ pub mod Predifi {
     // 1 STRK in WEI
     const ONE_STRK: u256 = 1_000_000_000_000_000_000;
 
+    // 200 PREDIFI TOKEN in WEI
+    const MIN_STAKE_AMOUNT: u256 = 200_000_000_000_000_000_000;
+
+    // Validator role
+    const VALIDATOR_ROLE: felt252 = selector!("VALIDATOR_ROLE");
+
+    // components definition
+    component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
+    component!(path: SRC5Component, storage: src5, event: SRC5Event);
+
+    // AccessControl
+    #[abi(embed_v0)]
+    impl AccessControlImpl =
+        AccessControlComponent::AccessControlImpl<ContractState>;
+    impl AccessControlInternalImpl = AccessControlComponent::InternalImpl<ContractState>;
+
+    // SRC5
+    #[abi(embed_v0)]
+    impl SRC5Impl = SRC5Component::SRC5Impl<ContractState>;
+
     #[storage]
     struct Storage {
         pools: Map<u256, PoolDetails>, // pool id to pool details struct
@@ -25,7 +47,11 @@ pub mod Predifi {
         pool_odds: Map<u256, PoolOdds>,
         pool_stakes: Map<u256, UserStake>,
         pool_vote: Map<u256, bool>, // pool id to vote
-        user_stakes: Map<(u256, ContractAddress), UserStake> // Mapping user -> stake details
+        user_stakes: Map<(u256, ContractAddress), UserStake>, // Mapping user -> stake details
+        #[substorage(v0)]
+        accesscontrol: AccessControlComponent::Storage,
+        #[substorage(v0)]
+        src5: SRC5Component::Storage,
     }
 
     // Events
@@ -33,6 +59,11 @@ pub mod Predifi {
     #[derive(Drop, starknet::Event)]
     enum Event {
         BetPlaced: BetPlaced,
+        UserStaked: UserStaked,
+        #[flat]
+        AccessControlEvent: AccessControlComponent::Event,
+        #[flat]
+        SRC5Event: SRC5Component::Event,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -42,6 +73,12 @@ pub mod Predifi {
         option: felt252,
         amount: u256,
         shares: u256,
+    }
+    #[derive(Drop, starknet::Event)]
+    struct UserStaked {
+        pool_id: u256,
+        address: ContractAddress,
+        amount: u256,
     }
 
     #[constructor]
@@ -191,6 +228,20 @@ pub mod Predifi {
             self.pools.write(pool.pool_id, pool);
             // Emit event
             self.emit(Event::BetPlaced(BetPlaced { pool_id, address, option, amount, shares }));
+        }
+
+        fn stake(ref self: ContractState, pool_id: u256, amount: u256) {
+            assert(amount >= MIN_STAKE_AMOUNT, 'stake amount too low');
+            let address = get_caller_address();
+            // Add to previous stake if any
+            let prev_stake = self.user_stakes.read((pool.pool_id, address));
+            let new_stake = prev_stake + amount;
+            // write the new stake
+            self.user_stakes.write((pool.pool_id, address), new_stake);
+            // grant the validator role
+            self.accesscontrol._grant_role(VALIDATOR_ROLE, address);
+            // emit event
+            self.emit(UserStaked { pool_id, address, amount });
         }
 
         fn get_user_stake(
