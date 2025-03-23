@@ -1,5 +1,7 @@
 use contract::base::types::{Category, Pool, PoolDetails, Status};
 use contract::interfaces::ipredifi::{IPredifiDispatcher, IPredifiDispatcherTrait};
+use core::felt252;
+use core::traits::Into;
 use snforge_std::{ContractClassTrait, DeclareResultTrait, declare};
 use starknet::{
     ClassHash, ContractAddress, get_block_timestamp, get_caller_address, get_contract_address,
@@ -240,10 +242,11 @@ fn test_vote() {
     let pool = contract.get_pool(pool_id);
     assert(pool.totalBetCount == 1, 'Total bet count should be 1');
     assert(pool.totalStakeOption1 == 200, 'Total stake should be 200');
+    assert(pool.totalSharesOption1 == 199, 'Total share should be 199');
 }
 
 #[test]
-fn test_successful_get_pool() {
+fn test_vote_with_user_stake() {
     let contract = deploy_predifi();
     let pool_id = contract
         .create_pool(
@@ -263,8 +266,41 @@ fn test_successful_get_pool() {
             false,
             Category::Sports,
         );
+
     let pool = contract.get_pool(pool_id);
-    assert(pool.poolName == 'Example Pool', 'Pool not found');
+
+    contract.vote(pool_id, 'Team A', 200);
+
+    let user_stake = contract.get_user_stake(pool_id, pool.address);
+
+    assert(user_stake.amount == 200, 'Incorrect amount');
+    assert(user_stake.shares == 199, 'Incorrect shares');
+    assert(!user_stake.option, 'Incorrect option');
+}
+
+#[test]
+fn test_successful_get_pool() {
+    let contract = deploy_predifi();
+    let pool_id = contract
+        .create_pool(
+            'Example Pool1',
+            Pool::WinBet,
+            "A simple betting pool1",
+            "image.png",
+            "event.com/details",
+            1710000000,
+            1710003600,
+            1710007200,
+            'Team A',
+            'Team B',
+            100,
+            10000,
+            5,
+            false,
+            Category::Sports,
+        );
+    let pool = contract.get_pool(pool_id);
+    assert(pool.poolName == 'Example Pool1', 'Pool not found');
 }
 
 #[test]
@@ -340,4 +376,128 @@ fn test_when_max_bet_amount_greater_than_required() {
             Category::Sports,
         );
     contract.vote(pool_id, 'Team B', 1000000);
+}
+
+#[test]
+fn test_get_pool_odds() {
+    let contract = deploy_predifi();
+
+    // Create a new pool
+    let pool_id = contract
+        .create_pool(
+            'Example Pool',
+            Pool::WinBet,
+            "A simple betting pool",
+            "image.png",
+            "event.com/details",
+            1710000000,
+            1710003600,
+            1710007200,
+            'Team A',
+            'Team B',
+            100,
+            10000,
+            5,
+            false,
+            Category::Sports,
+        );
+
+    contract.vote(pool_id, 'Team A', 200);
+
+    let pool_odds = contract.pool_odds(pool_id);
+
+    assert(pool_odds.option1_odds == 0, 'Incorrect odds for option 1');
+    assert(pool_odds.option2_odds == 10000, 'Incorrect odds for option 2');
+}
+
+#[test]
+fn test_get_pool_stakes() {
+    let contract = deploy_predifi();
+
+    // Create a new pool
+    let pool_id = contract
+        .create_pool(
+            'Example Pool',
+            Pool::WinBet,
+            "A simple betting pool",
+            "image.png",
+            "event.com/details",
+            1710000000,
+            1710003600,
+            1710007200,
+            'Team A',
+            'Team B',
+            100,
+            10000,
+            5,
+            false,
+            Category::Sports,
+        );
+
+    contract.vote(pool_id, 'Team A', 200);
+
+    let pool_stakes = contract.get_pool_stakes(pool_id);
+
+    assert(pool_stakes.amount == 200, 'Incorrect pool stake amount');
+    assert(pool_stakes.shares == 199, 'Incorrect pool stake shares');
+    assert(!pool_stakes.option, 'Incorrect pool stake option');
+}
+
+#[test]
+fn test_get_pool_vote() {
+    let contract = deploy_predifi();
+
+    // Create a new pool
+    let pool_id = contract
+        .create_pool(
+            'Example Pool',
+            Pool::WinBet,
+            "A simple betting pool",
+            "image.png",
+            "event.com/details",
+            1710000000,
+            1710003600,
+            1710007200,
+            'Team A',
+            'Team B',
+            100,
+            10000,
+            5,
+            false,
+            Category::Sports,
+        );
+
+    contract.vote(pool_id, 'Team A', 200);
+
+    let pool_vote = contract.get_pool_vote(pool_id);
+
+    assert(!pool_vote, 'Incorrect pool vote');
+}
+
+#[test]
+fn test_get_pool_count() {
+    let contract = deploy_predifi();
+
+    assert(contract.get_pool_count() == 0, 'Initial pool count should be 0');
+
+    contract
+        .create_pool(
+            'Example Pool',
+            Pool::WinBet,
+            "A simple betting pool",
+            "image.png",
+            "event.com/details",
+            1710000000,
+            1710003600,
+            1710007200,
+            'Team A',
+            'Team B',
+            100,
+            10000,
+            5,
+            false,
+            Category::Sports,
+        );
+
+    assert(contract.get_pool_count() == 1, 'Pool count should be 1');
 }
