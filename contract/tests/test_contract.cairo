@@ -405,7 +405,7 @@ fn test_get_pool_odds() {
     contract.vote(pool_id, 'Team A', 100);
 
     let pool_odds = contract.pool_odds(pool_id);
-    
+
     assert(pool_odds.option1_odds == 2500, 'Incorrect odds for option 1');
     assert(pool_odds.option2_odds == 7500, 'Incorrect odds for option 2');
 }
