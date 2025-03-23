@@ -1,5 +1,5 @@
-use crate::base::types::{Category, Pool, PoolOdds, UserStake, PoolDetails};
 use starknet::ContractAddress;
+use crate::base::types::{Category, Pool, PoolDetails, PoolOdds, UserStake};
 #[starknet::interface]
 pub trait IPredifi<TContractState> {
     // Pool Creation and Management

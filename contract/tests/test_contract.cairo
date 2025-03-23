@@ -137,7 +137,7 @@ fn test_zero_min_bet() {
 }
 
 #[test]
-#[should_panic(expected: "Creator fee cannot exceed 100%")]
+#[should_panic(expected: "Creator fee cannot exceed 5%")]
 fn test_excessive_creator_fee() {
     let contract = deploy_predifi();
     let (
@@ -173,7 +173,7 @@ fn test_excessive_creator_fee() {
             option2,
             minBetAmount,
             maxBetAmount,
-            101,
+            6,
             isPrivate,
             category,
         );
