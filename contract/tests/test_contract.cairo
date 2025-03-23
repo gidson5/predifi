@@ -402,12 +402,12 @@ fn test_get_pool_odds() {
             Category::Sports,
         );
 
-    contract.vote(pool_id, 'Team A', 200);
+    contract.vote(pool_id, 'Team A', 100);
 
     let pool_odds = contract.pool_odds(pool_id);
-
-    assert(pool_odds.option1_odds == 0, 'Incorrect odds for option 1');
-    assert(pool_odds.option2_odds == 10000, 'Incorrect odds for option 2');
+    
+    assert(pool_odds.option1_odds == 2500, 'Incorrect odds for option 1');
+    assert(pool_odds.option2_odds == 7500, 'Incorrect odds for option 2');
 }
 
 #[test]

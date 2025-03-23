@@ -169,7 +169,8 @@ pub mod Predifi {
             pool.totalBetCount += 1;
 
             // Update pool odds
-            let odds = self.calculate_odds(pool.totalStakeOption1, pool.totalStakeOption2);
+            let odds = self
+                .calculate_odds(pool.pool_id, pool.totalStakeOption1, pool.totalStakeOption2);
             self.pool_odds.write(pool_id, odds);
 
             // Calculate the user's shares
@@ -235,28 +236,66 @@ pub mod Predifi {
         }
 
         fn calculate_odds(
-            ref self: ContractState, total_stake_option1: u256, total_stake_option2: u256,
+            ref self: ContractState,
+            pool_id: u256,
+            total_stake_option1: u256,
+            total_stake_option2: u256,
         ) -> PoolOdds {
+            // Fetch the current pool odds
+            let current_pool_odds = self.pool_odds.read(pool_id);
+
+            // If no current pool odds exist, use the initial odds (5000 for both options)
+            let initial_odds = 5000; // 0.5 in decimal (5000/10000)
+            let current_option1_odds = if current_pool_odds.option1_odds == 0 {
+                initial_odds
+            } else {
+                current_pool_odds.option1_odds
+            };
+            let current_option2_odds = if current_pool_odds.option2_odds == 0 {
+                initial_odds
+            } else {
+                current_pool_odds.option2_odds
+            };
+
+            // Calculate the total pool amount
             let total_pool_amount = total_stake_option1 + total_stake_option2;
+
+            // If no stakes are placed, return the current pool odds
             if total_pool_amount == 0 {
                 return PoolOdds {
-                    option1_odds: 0,
-                    option2_odds: 0,
-                    option1_probability: 0,
-                    option2_probability: 0,
-                    implied_probability1: 0,
-                    implied_probability2: 0,
+                    option1_odds: current_option1_odds,
+                    option2_odds: current_option2_odds,
+                    option1_probability: current_option1_odds,
+                    option2_probability: current_option2_odds,
+                    implied_probability1: 10000 / current_option1_odds,
+                    implied_probability2: 10000 / current_option2_odds,
                 };
             }
-            let option1_odds = (total_stake_option2 * 10000) / total_pool_amount;
-            let option2_odds = (total_stake_option1 * 10000) / total_pool_amount;
+
+            // Calculate the new odds based on the stakes
+            let new_option1_odds = (total_stake_option2 * 10000) / total_pool_amount;
+            let new_option2_odds = (total_stake_option1 * 10000) / total_pool_amount;
+
+            // update the new odds with the current odds (weighted average)
+            let option1_odds = (current_option1_odds + new_option1_odds) / 2;
+            let option2_odds = (current_option2_odds + new_option2_odds) / 2;
+
+            // Calculate probabilities
+            let option1_probability = option1_odds;
+            let option2_probability = option2_odds;
+
+            // Calculate implied probabilities
+            let implied_probability1 = 10000 / option1_odds;
+            let implied_probability2 = 10000 / option2_odds;
+
+            // Return the updated PoolOdds struct
             PoolOdds {
-                option1_odds,
-                option2_odds,
-                option1_probability: option1_odds,
-                option2_probability: option2_odds,
-                implied_probability1: option1_odds,
-                implied_probability2: option2_odds,
+                option1_odds: option1_odds,
+                option2_odds: option2_odds,
+                option1_probability,
+                option2_probability,
+                implied_probability1,
+                implied_probability2,
             }
         }
     }
