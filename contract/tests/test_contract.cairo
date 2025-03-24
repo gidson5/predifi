@@ -2,10 +2,17 @@ use contract::base::types::{Category, Pool, PoolDetails, Status};
 use contract::interfaces::ipredifi::{IPredifiDispatcher, IPredifiDispatcherTrait};
 use core::felt252;
 use core::traits::Into;
-use snforge_std::{ContractClassTrait, DeclareResultTrait, declare};
+use snforge_std::{
+    ContractClassTrait, DeclareResultTrait, declare, start_cheat_caller_address,
+    stop_cheat_caller_address,
+};
 use starknet::{
     ClassHash, ContractAddress, get_block_timestamp, get_caller_address, get_contract_address,
+    contract_address_const,
 };
+
+// Validator role
+const VALIDATOR_ROLE: felt252 = selector!("VALIDATOR_ROLE");
 
 fn owner() -> ContractAddress {
     'owner'.try_into().unwrap()
@@ -500,4 +507,73 @@ fn test_get_pool_count() {
         );
 
     assert(contract.get_pool_count() == 1, 'Pool count should be 1');
+}
+
+#[test]
+fn test_stake_successful() {
+    // test staking
+    let contract = deploy_predifi();
+    // Create a new pool
+    let pool_id = contract
+        .create_pool(
+            'Example Pool',
+            Pool::WinBet,
+            "A simple betting pool",
+            "image.png",
+            "event.com/details",
+            1710000000,
+            1710003600,
+            1710007200,
+            'Team A',
+            'Team B',
+            100,
+            10000,
+            5,
+            false,
+            Category::Sports,
+        );
+    // Define test data
+    let caller = contract_address_const::<1>();
+    let stake_amount: u256 = 200_000_000_000_000_000_000;
+
+    // Call stake function
+    start_cheat_caller_address(contract.contract_address, caller);
+    contract.stake(pool_id, stake_amount);
+    stop_cheat_caller_address(contract.contract_address);
+
+    // Check stake and verify validator role
+    assert(contract.get_user_stake(pool_id, caller) == stake_amount, 'Invalid stake amount');
+    assert(contract.has_role(VALIDATOR_ROLE, caller), 'No role found');
+}
+
+#[test]
+#[should_panic]
+fn test_stake_unsuccessful_when_lower_than_min_amount() {
+    // Test Staking
+    let contract = deploy_predifi();
+    // Create a new pool
+    let pool_id = contract
+        .create_pool(
+            'Example Pool',
+            Pool::WinBet,
+            "A simple betting pool",
+            "image.png",
+            "event.com/details",
+            1710000000,
+            1710003600,
+            1710007200,
+            'Team A',
+            'Team B',
+            100,
+            10000,
+            5,
+            false,
+            Category::Sports,
+        );
+    // Define test data
+    let caller = contract_address_const::<1>();
+    let stake_amount: u256 = 10_000_000_000_000_000_000;
+    start_cheat_caller_address(contract.contract_address, caller);
+    contract.stake(pool_id, stake_amount); // should panic
+    stop_cheat_caller_address(contract.contract_address);
 }
