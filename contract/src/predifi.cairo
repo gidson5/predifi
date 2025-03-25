@@ -1,6 +1,9 @@
 #[starknet::contract]
 pub mod Predifi {
     // Cairo imports
+    use core::hash::{HashStateExTrait, HashStateTrait};
+    use core::pedersen::PedersenTrait;
+    use core::poseidon::PoseidonTrait;
     use starknet::storage::{
         Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
         StoragePointerWriteAccess,
@@ -9,10 +12,6 @@ pub mod Predifi {
     use crate::base::errors::Errors::{
         AMOUNT_ABOVE_MAXIMUM, AMOUNT_BELOW_MINIMUM, INACTIVE_POOL, INVALID_POOL_OPTION,
     };
-
-    use core::{pedersen::PedersenTrait, poseidon::PoseidonTrait};
-
-    use core::hash::{HashStateTrait, HashStateExTrait};
     // oz imports
 
     // package imports
@@ -105,7 +104,7 @@ pub mod Predifi {
             // While a pool with this pool_id already exists, generate a new one.
             while self.retrieve_pool(pool_id) {
                 pool_id = self.generate_deterministic_number();
-            };
+            }
 
             // Create pool details structure
             let creator_address = get_caller_address();
