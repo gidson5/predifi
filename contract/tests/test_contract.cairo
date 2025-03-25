@@ -545,3 +545,29 @@ fn test_get_pool_vote() {
 
     assert(!pool_vote, 'Incorrect pool vote');
 }
+
+#[test]
+fn test_get_pool_creator() {
+    let contract = deploy_predifi();
+    let pool_id = contract
+        .create_pool(
+            'Example Pool',
+            Pool::WinBet,
+            "A simple betting pool",
+            "image.png",
+            "event.com/details",
+            1710000000,
+            1710003600,
+            1710007200,
+            'Team A',
+            'Team B',
+            100,
+            10000,
+            5,
+            false,
+            Category::Sports,
+        );
+
+    assert!(pool_id != 0, "not created");
+    assert_eq!(contract.get_pool_creator(pool_id), get_caller_address());
+}

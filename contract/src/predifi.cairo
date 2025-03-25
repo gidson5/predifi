@@ -373,5 +373,10 @@ pub mod Predifi {
                 implied_probability2,
             }
         }
+
+        fn get_pool_creator(self: @ContractState, pool_id: u256) -> ContractAddress {
+            let pool = self.pools.read(pool_id);
+            pool.address
+        }
     }
 }
