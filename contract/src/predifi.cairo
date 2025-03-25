@@ -95,7 +95,7 @@ pub mod Predifi {
             );
             let current_time = get_block_timestamp();
             assert!(current_time < poolStartTime, "Start time must be in the future");
-            assert!(creatorFee <= 100, "Creator fee cannot exceed 100%");
+            assert!(creatorFee <= 5, "Creator fee cannot exceed 5%");
 
             // Collect pool creation fee (1 STRK)
             self.collect_pool_creation_fee(get_caller_address());
