@@ -14,6 +14,11 @@ use starknet::{
 // Validator role
 const VALIDATOR_ROLE: felt252 = selector!("VALIDATOR_ROLE");
 
+#[starknet::interface]
+trait IMockAccessControl<TContractState> {
+    fn has_role(self: @TContractState, role: felt252, user: ContractAddress) -> bool;
+}
+
 fn owner() -> ContractAddress {
     'owner'.try_into().unwrap()
 }
@@ -614,8 +619,11 @@ fn test_stake_successful() {
     stop_cheat_caller_address(contract.contract_address);
 
     // Check stake and verify validator role
-    assert(contract.get_user_stake(pool_id, caller) == stake_amount, 'Invalid stake amount');
-    assert(contract.has_role(VALIDATOR_ROLE, caller), 'No role found');
+    assert(contract.get_user_stake(pool_id, caller).amount == stake_amount, 'Invalid stake amount');
+    let access_control_dispatcher = IMockAccessControlDispatcher {
+        contract_address: contract.contract_address,
+    };
+    assert(access_control_dispatcher.has_role(VALIDATOR_ROLE, caller), 'No role found');
 }
 
 #[test]

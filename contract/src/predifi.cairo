@@ -14,8 +14,8 @@ pub mod Predifi {
 
     use core::hash::{HashStateTrait, HashStateExTrait};
     // oz imports
-    use openzeppelin_access::accesscontrol::AccessControlComponent;
-    use openzeppelin_introspection::src5::SRC5Component;
+    use openzeppelin::access::accesscontrol::AccessControlComponent;
+    use openzeppelin::introspection::src5::SRC5Component;
 
     // package imports
     use crate::base::types::{Category, Pool, PoolDetails, PoolOdds, Status, UserStake};
@@ -45,7 +45,7 @@ pub mod Predifi {
     impl SRC5Impl = SRC5Component::SRC5Impl<ContractState>;
 
     #[storage]
-    struct Storage {
+    pub struct Storage {
         pools: Map<u256, PoolDetails>, // pool id to pool details struct
         pool_count: u256, // number of pools available totally
         pool_odds: Map<u256, PoolOdds>,
@@ -53,7 +53,7 @@ pub mod Predifi {
         pool_vote: Map<u256, bool>, // pool id to vote
         user_stakes: Map<(u256, ContractAddress), UserStake>, // Mapping user -> stake details
         #[substorage(v0)]
-        accesscontrol: AccessControlComponent::Storage,
+        pub accesscontrol: AccessControlComponent::Storage,
         #[substorage(v0)]
         src5: SRC5Component::Storage,
         user_hash_poseidon: felt252,
@@ -255,12 +255,12 @@ pub mod Predifi {
 
         fn stake(ref self: ContractState, pool_id: u256, amount: u256) {
             assert(amount >= MIN_STAKE_AMOUNT, 'stake amount too low');
-            let address = get_caller_address();
+            let address: ContractAddress = get_caller_address();
             // Add to previous stake if any
-            let prev_stake = self.user_stakes.read((pool.pool_id, address));
-            let new_stake = prev_stake + amount;
+            let mut stake = self.user_stakes.read((pool_id, address));
+            stake.amount = amount + stake.amount;
             // write the new stake
-            self.user_stakes.write((pool.pool_id, address), new_stake);
+            self.user_stakes.write((pool_id, address), stake);
             // grant the validator role
             self.accesscontrol._grant_role(VALIDATOR_ROLE, address);
             // emit event
