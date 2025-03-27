@@ -594,9 +594,7 @@ fn deploy_utils() -> (IUtilityDispatcher, ContractAddress) {
         .unwrap()
         .contract_class(); // contract class declaration
 
-    let owner: ContractAddress = contract_address_const::<
-        'owner',
-    >(); //setting the current owner's address
+    let owner: ContractAddress = get_caller_address(); //setting the current owner's address
     let pragma_address: ContractAddress =
         0x036031daa264c24520b11d93af622c848b2499b66b41d611bac95e13cfca131a
         .try_into()

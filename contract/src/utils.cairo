@@ -1,13 +1,11 @@
 #[starknet::contract]
 pub mod Utils {
-    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
-    use starknet::{ContractAddress, get_caller_address};
-    use core::traits::TryInto;
     use core::panics::panic;
-
+    use core::traits::TryInto;
     use pragma_lib::abi::{IPragmaABIDispatcher, IPragmaABIDispatcherTrait};
     use pragma_lib::types::{DataType, PragmaPricesResponse};
-
+    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
+    use starknet::{ContractAddress, get_caller_address};
     use crate::interfaces::iUtils::IUtility;
 
     const STRK_USD: felt252 = 6004514686061859652; // STRK/USD in felt252
@@ -53,7 +51,7 @@ pub mod Utils {
     impl UtilsImpl of IUtility<ContractState> {
         //  PRAGMA PRICE FEED INTEGRATION
         //   @inputs - Contract State to reterieve the contract address of the pragma contract
-        //   @output - STRK/USD price in felt
+        //   @output - STRK/USD price
 
         fn get_strk_usd_price(self: @ContractState) -> u128 {
             /// Retrieve the oracle dispatcher
