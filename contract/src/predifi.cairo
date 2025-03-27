@@ -3,7 +3,7 @@ pub mod Predifi {
     // Cairo imports
     use starknet::storage::{
         Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
-        StoragePointerWriteAccess,
+        StoragePointerWriteAccess, Vec, MutableVecTrait, VecTrait,
     };
     use starknet::{ContractAddress, get_block_timestamp, get_caller_address, get_contract_address};
     use crate::base::errors::Errors::{
@@ -56,6 +56,7 @@ pub mod Predifi {
         pub accesscontrol: AccessControlComponent::Storage,
         #[substorage(v0)]
         src5: SRC5Component::Storage,
+        validators: Vec<ContractAddress>,
         user_hash_poseidon: felt252,
         user_hash_pedersen: felt252,
         nonce: felt252,
@@ -263,6 +264,8 @@ pub mod Predifi {
             self.user_stakes.write((pool_id, address), stake);
             // grant the validator role
             self.accesscontrol._grant_role(VALIDATOR_ROLE, address);
+            // add caller to validator list
+            self.validators.append().write(address);
             // emit event
             self.emit(UserStaked { pool_id, address, amount });
         }
