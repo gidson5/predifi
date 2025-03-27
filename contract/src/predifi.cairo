@@ -189,6 +189,9 @@ pub mod Predifi {
 
             self.pool_odds.write(pool_id, initial_odds);
 
+            // Add to pool count
+            self.pool_count.write(self.pool_count.read() + 1);
+
             pool_id
         }
 
