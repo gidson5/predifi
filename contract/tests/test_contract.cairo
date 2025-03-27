@@ -2,7 +2,7 @@ use contract::base::types::{Category, Pool, PoolDetails, Status};
 use contract::interfaces::ipredifi::{IPredifiDispatcher, IPredifiDispatcherTrait};
 use core::felt252;
 use core::traits::Into;
-use snforge_std::{ContractClassTrait, DeclareResultTrait, declare};
+use snforge_std::{ContractClassTrait, DeclareResultTrait, declare, start_cheat_caller_address, stop_cheat_caller_address};
 use starknet::{
     ClassHash, ContractAddress, get_block_timestamp, get_caller_address, get_contract_address,
 };
@@ -549,6 +549,8 @@ fn test_get_pool_vote() {
 #[test]
 fn test_get_pool_creator() {
     let contract = deploy_predifi();
+
+    start_cheat_caller_address(contract.contract_address, 123.try_into().unwrap());
     let pool_id = contract
         .create_pool(
             'Example Pool',
@@ -567,7 +569,8 @@ fn test_get_pool_creator() {
             false,
             Category::Sports,
         );
+    stop_cheat_caller_address(contract.contract_address);
 
     assert!(pool_id != 0, "not created");
-    assert_eq!(contract.get_pool_creator(pool_id), get_caller_address());
+    assert!(contract.get_pool_creator(pool_id) == 123.try_into().unwrap(), "incorrect creator");
 }
