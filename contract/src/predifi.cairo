@@ -158,6 +158,11 @@ pub mod Predifi {
             self.pool_count.read()
         }
 
+        fn get_pool_creator(self: @ContractState, pool_id: u256) -> ContractAddress {
+            let pool = self.pools.read(pool_id);
+            pool.address
+        }
+
         fn pool_odds(self: @ContractState, pool_id: u256) -> PoolOdds {
             self.pool_odds.read(pool_id)
         }
