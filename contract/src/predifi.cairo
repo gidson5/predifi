@@ -4,17 +4,17 @@ pub mod Predifi {
     use core::hash::{HashStateExTrait, HashStateTrait};
     use core::pedersen::PedersenTrait;
     use core::poseidon::PoseidonTrait;
+    // oz imports
+    use openzeppelin::access::accesscontrol::AccessControlComponent;
+    use openzeppelin::introspection::src5::SRC5Component;
     use starknet::storage::{
-        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
-        StoragePointerWriteAccess, Vec, MutableVecTrait, VecTrait,
+        Map, MutableVecTrait, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+        StoragePointerWriteAccess, Vec, VecTrait,
     };
     use starknet::{ContractAddress, get_block_timestamp, get_caller_address, get_contract_address};
     use crate::base::errors::Errors::{
         AMOUNT_ABOVE_MAXIMUM, AMOUNT_BELOW_MINIMUM, INACTIVE_POOL, INVALID_POOL_OPTION,
     };
-    // oz imports
-    use openzeppelin::access::accesscontrol::AccessControlComponent;
-    use openzeppelin::introspection::src5::SRC5Component;
 
     // package imports
     use crate::base::types::{Category, Pool, PoolDetails, PoolOdds, Status, UserStake};

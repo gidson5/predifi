@@ -13,8 +13,8 @@ use snforge_std::{
 };
 use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
 use starknet::{
-    ClassHash, ContractAddress, get_block_timestamp, get_caller_address, get_contract_address,
-    contract_address_const,
+    ClassHash, ContractAddress, contract_address_const, get_block_timestamp, get_caller_address,
+    get_contract_address,
 };
 
 // Validator role
