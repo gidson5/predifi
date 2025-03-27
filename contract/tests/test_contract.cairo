@@ -11,11 +11,19 @@ use snforge_std::{
     ContractClassTrait, DeclareResultTrait, declare, start_cheat_caller_address,
     stop_cheat_caller_address, test_address,
 };
-use starknet::contract_address::contract_address_const;
 use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
 use starknet::{
-    ClassHash, ContractAddress, get_block_timestamp, get_caller_address, get_contract_address,
+    ClassHash, ContractAddress, contract_address_const, get_block_timestamp, get_caller_address,
+    get_contract_address,
 };
+
+// Validator role
+const VALIDATOR_ROLE: felt252 = selector!("VALIDATOR_ROLE");
+
+#[starknet::interface]
+trait IMockAccessControl<TContractState> {
+    fn has_role(self: @TContractState, role: felt252, user: ContractAddress) -> bool;
+}
 
 fn owner() -> ContractAddress {
     'owner'.try_into().unwrap()
@@ -557,6 +565,106 @@ fn test_get_pool_vote() {
 }
 
 #[test]
+fn test_get_pool_count() {
+    let contract = deploy_predifi();
+
+    assert(contract.get_pool_count() == 0, 'Initial pool count should be 0');
+
+    contract
+        .create_pool(
+            'Example Pool',
+            Pool::WinBet,
+            "A simple betting pool",
+            "image.png",
+            "event.com/details",
+            1710000000,
+            1710003600,
+            1710007200,
+            'Team A',
+            'Team B',
+            100,
+            10000,
+            5,
+            false,
+            Category::Sports,
+        );
+
+    assert(contract.get_pool_count() == 1, 'Pool count should be 1');
+}
+
+#[test]
+fn test_stake_successful() {
+    // test staking
+    let contract = deploy_predifi();
+    // Create a new pool
+
+    // Define test data
+    let caller = contract_address_const::<1>();
+    let stake_amount: u256 = 200_000_000_000_000_000_000;
+    let pool_id = contract
+        .create_pool(
+            'Example Pool',
+            Pool::WinBet,
+            "A simple betting pool",
+            "image.png",
+            "event.com/details",
+            1710000000,
+            1710003600,
+            1710007200,
+            'Team A',
+            'Team B',
+            100,
+            10000,
+            5,
+            false,
+            Category::Sports,
+        );
+    // Call stake function
+    start_cheat_caller_address(contract.contract_address, caller);
+    contract.stake(pool_id, stake_amount);
+    stop_cheat_caller_address(contract.contract_address);
+
+    // Check stake and verify validator role
+    assert(contract.get_user_stake(pool_id, caller).amount == stake_amount, 'Invalid stake amount');
+    let access_control_dispatcher = IMockAccessControlDispatcher {
+        contract_address: contract.contract_address,
+    };
+    assert(access_control_dispatcher.has_role(VALIDATOR_ROLE, caller), 'No role found');
+}
+
+#[test]
+#[should_panic]
+fn test_stake_unsuccessful_when_lower_than_min_amount() {
+    // Test Staking
+    let contract = deploy_predifi();
+    // Create a new pool
+    let pool_id = contract
+        .create_pool(
+            'Example Pool',
+            Pool::WinBet,
+            "A simple betting pool",
+            "image.png",
+            "event.com/details",
+            1710000000,
+            1710003600,
+            1710007200,
+            'Team A',
+            'Team B',
+            100,
+            10000,
+            5,
+            false,
+            Category::Sports,
+        );
+    // Define test data
+    let caller = contract_address_const::<1>();
+    let stake_amount: u256 = 10_000_000_000_000_000_000;
+    start_cheat_caller_address(contract.contract_address, caller);
+    contract.stake(pool_id, stake_amount); // should panic
+    stop_cheat_caller_address(contract.contract_address);
+}
+
+#[test]
 fn test_get_pool_creator() {
     let contract = deploy_predifi();
 
@@ -579,7 +687,6 @@ fn test_get_pool_creator() {
             false,
             Category::Sports,
         );
-
     stop_cheat_caller_address(contract.contract_address);
 
     assert!(pool_id != 0, "not created");

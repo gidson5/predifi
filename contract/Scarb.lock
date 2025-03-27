@@ -5,6 +5,7 @@ version = 1
 name = "contract"
 version = "0.1.0"
 dependencies = [
+ "openzeppelin",
  "pragma_lib",
  "snforge_std",
 ]
