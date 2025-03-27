@@ -1,6 +1,9 @@
 #[starknet::contract]
 pub mod Predifi {
     // Cairo imports
+    use core::hash::{HashStateExTrait, HashStateTrait};
+    use core::pedersen::PedersenTrait;
+    use core::poseidon::PoseidonTrait;
     use starknet::storage::{
         Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
         StoragePointerWriteAccess, Vec, MutableVecTrait, VecTrait,
@@ -9,10 +12,6 @@ pub mod Predifi {
     use crate::base::errors::Errors::{
         AMOUNT_ABOVE_MAXIMUM, AMOUNT_BELOW_MINIMUM, INACTIVE_POOL, INVALID_POOL_OPTION,
     };
-
-    use core::{pedersen::PedersenTrait, poseidon::PoseidonTrait};
-
-    use core::hash::{HashStateTrait, HashStateExTrait};
     // oz imports
     use openzeppelin::access::accesscontrol::AccessControlComponent;
     use openzeppelin::introspection::src5::SRC5Component;
@@ -133,7 +132,7 @@ pub mod Predifi {
             );
             let current_time = get_block_timestamp();
             assert!(current_time < poolStartTime, "Start time must be in the future");
-            assert!(creatorFee <= 100, "Creator fee cannot exceed 100%");
+            assert!(creatorFee <= 5, "Creator fee cannot exceed 5%");
 
             // Collect pool creation fee (1 STRK)
             self.collect_pool_creation_fee(get_caller_address());
@@ -143,7 +142,7 @@ pub mod Predifi {
             // While a pool with this pool_id already exists, generate a new one.
             while self.retrieve_pool(pool_id) {
                 pool_id = self.generate_deterministic_number();
-            };
+            }
 
             // Create pool details structure
             let creator_address = get_caller_address();
@@ -195,6 +194,11 @@ pub mod Predifi {
 
         fn pool_count(self: @ContractState) -> u256 {
             self.pool_count.read()
+        }
+
+        fn get_pool_creator(self: @ContractState, pool_id: u256) -> ContractAddress {
+            let pool = self.pools.read(pool_id);
+            pool.address
         }
 
         fn pool_odds(self: @ContractState, pool_id: u256) -> PoolOdds {
