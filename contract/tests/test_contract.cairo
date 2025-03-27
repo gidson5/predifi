@@ -2,7 +2,10 @@ use contract::base::types::{Category, Pool, PoolDetails, Status};
 use contract::interfaces::ipredifi::{IPredifiDispatcher, IPredifiDispatcherTrait};
 use core::felt252;
 use core::traits::Into;
-use snforge_std::{ContractClassTrait, DeclareResultTrait, declare, start_cheat_caller_address, stop_cheat_caller_address};
+use snforge_std::{
+    ContractClassTrait, DeclareResultTrait, declare, start_cheat_caller_address,
+    stop_cheat_caller_address,
+};
 use starknet::{
     ClassHash, ContractAddress, get_block_timestamp, get_caller_address, get_contract_address,
 };
