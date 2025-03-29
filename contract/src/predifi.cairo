@@ -7,15 +7,17 @@ pub mod Predifi {
     // oz imports
     use openzeppelin::access::accesscontrol::AccessControlComponent;
     use openzeppelin::introspection::src5::SRC5Component;
+    use openzeppelin::upgrades::UpgradeableComponent;
+    use openzeppelin::upgrades::interface::IUpgradeable;
+    use starknet::class_hash::ClassHash;
     use starknet::storage::{
         Map, MutableVecTrait, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
         StoragePointerWriteAccess, Vec, VecTrait,
     };
-    use starknet::{ContractAddress, get_block_timestamp, get_caller_address, get_contract_address, class_hash::ClassHash};
+    use starknet::{ContractAddress, get_block_timestamp, get_caller_address, get_contract_address};
     use crate::base::errors::Errors::{
         AMOUNT_ABOVE_MAXIMUM, AMOUNT_BELOW_MINIMUM, INACTIVE_POOL, INVALID_POOL_OPTION,
     };
-    use openzeppelin::upgrades::{interface::IUpgradeable, UpgradeableComponent};
 
     //components
     component!(path: UpgradeableComponent, storage: upgradeable, event: UpgradeableEvent);
@@ -444,8 +446,6 @@ pub mod Predifi {
                 implied_probability2,
             }
         }
-
-        
     }
 
     #[abi(embed_v0)]
